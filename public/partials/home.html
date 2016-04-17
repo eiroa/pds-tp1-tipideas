@@ -1,7 +1,7 @@
-<div class="page-header">
+<div class="page-header text-center">
         <h1>TP1 - TIPS</h1>
       </div>
-	
+		
 
 <select ng-model="sortValue" style="margin-bottom:20px;">
             <option value="">Select a filter</option>
@@ -9,7 +9,7 @@
 		<option value="date">Date</option>
 		<option value="comments.length">Comments</option>
   </select>
-   <div class="well" ng-repeat="post in posts | orderBy: sortValue">
+   <div ng-show="isLoggedIn()" class="well" ng-repeat="post in posts | orderBy: sortValue">
         <span class="glyphicon glyphicon-thumbs-up"
 		style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
           ng-click="addVote(post)"></span>
@@ -29,7 +29,8 @@
           </span>
         </span>
 	<span am-time-ago="post.date"></span>
-        <span ng-show="post.author">posted by - {{post.author}}></span>
+        <span ng-show="post.author">posted by - {{post.author}}</span>
+        <span >Posted by = {{post.user.username}}</span>
 
   <a  style="margin-left:10px;"href="#/posts/{{post._id}}">Comments - </a>
 	<span ng-show="post.comments">
@@ -44,8 +45,9 @@
   <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
 </div>
 
+	<div ng-show="isLoggedIn()">
 	<form ng-submit="addPost()"
-                ng-show="isLoggedIn()"
+                
 		style="margin-top:30px;">
 		<h3>Add a new post</h3>
 
@@ -63,3 +65,6 @@
 		</div>
 		<button type="submit" class="btn btn-primary">Post</button>
 	      </form>
+         </div>
+
+

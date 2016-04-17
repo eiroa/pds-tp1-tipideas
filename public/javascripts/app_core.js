@@ -52,13 +52,29 @@ app.factory('auth',['$http','$window',function($http,$window){
 	return auth;
 }])
 
-app.factory('posts', ['$http', 'auth',function($http){
+app.factory('logger',['$http', 'auth',function($http,auth){
+
+	var service = {
+		activities:[]
+	};
+
+	service.getActivities = function(){
+		return $http.get('/activities').success(function(data){
+      			angular.copy(data, service.activities);
+			console.log('activities loaded');
+    		});
+        };
+	
+	return service;
+}]);
+
+app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
 	var service = {
 		posts:[]
 	};
 	
 	service.like = function(route,likeable){
-  		         return $http.put(route,{
+  		         return $http.put(route,null,{
 	headers : {Authorization: 'Bearer '+auth.getToken()}				
 			})
     				.success(function(data){
@@ -67,7 +83,9 @@ app.factory('posts', ['$http', 'auth',function($http){
                        };
 
 	service.dislike = function(route,likeable){
-  		         return $http.put(route)
+  		         return $http.put(route,null,{
+	headers : {Authorization: 'Bearer '+auth.getToken()}				
+			})
     				.success(function(data){
       				likeable.downvotes -= 1;
     			});
@@ -77,6 +95,7 @@ app.factory('posts', ['$http', 'auth',function($http){
    	 return $http.get('/posts').success(function(data){
       		angular.copy(data, service.posts);
 		console.log('posts cargados');
+		logger.getActivities();
     		});
   	};
 
@@ -112,9 +131,12 @@ app.factory('posts', ['$http', 'auth',function($http){
 	service.removePost = function(post){
 		return $http.post('posts/remove/'+post._id);
 	};
+        
 
 	return service;
 }]);
+
+
 
 app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth){
 	$scope.user = {};
@@ -136,9 +158,12 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 
 }]);
 
+app.controller('ActivityCtrl',['$scope','logger',function($scope,logger){
+	$scope.activities = logger.activities;
+}]);
+
 app.controller('MainCtrl', [ '$scope', 'posts','$state', '$stateParams','auth',
 function($scope,posts,$state,$stateParams,auth){
-  $scope.test = 'Hello world!';
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.posts = posts.posts;
@@ -146,11 +171,12 @@ function($scope,posts,$state,$stateParams,auth){
 
 $scope.addPost = function(){
   if(!$scope.title || $scope.title === '') { return; }
+  console.log('posting idea by '+auth.currentUser());
   posts.create({
 	title: $scope.title, 
 	link: $scope.link,
-	date: Date.now()  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente
-       // sin upvotes, ya que se definio que mongo lo crea en 0 por default
+	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
+       user: auth.username
   });
 	
 
@@ -234,9 +260,14 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/partials/home.html',
       controller: 'MainCtrl',
       resolve: {
-      	postPromise: ['posts', function(posts){
-      	return posts.getAll();
-       }]
+      	postPromise: ['posts','logger', function(posts,logger){
+		//Logger.getActivites();
+      		return posts.getAll();
+        }]
+
+	//postPromise2: ['logger', function(logger){
+	//	return logger.getActivites();
+        //}]
       }
   });
 

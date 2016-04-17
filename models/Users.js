@@ -5,7 +5,10 @@ var jwt = require('jsonwebtoken');
 var UserSchema = new mongoose.Schema({
   username: {type: String, lowercase:true,unique:true},
   hash: String,
-  salt: Date
+  isAdmin: Boolean,
+  isDirector: Boolean,
+  isProfessor: Boolean,
+  isStudent: Boolean
 });
 
 
@@ -15,8 +18,9 @@ UserSchema.methods.generateJWT = function() {
   var today = new Date();
   var exp = new Date(today);
   exp.setDate(today.getDate() + 60);
-
+   console.log('attempting authentication');
   return jwt.sign({
+    
     _id: this._id,
     username: this.username,
     exp: parseInt(exp.getTime() / 1000),
@@ -28,6 +32,8 @@ UserSchema.methods.setPassword = function(password){
 	console.log("trying to encode password: "+password);
 
 	this.hash =crypto.createHash('sha256').update(password).digest('base64');
+         
+         console.log('hash is: '+this.hash);
 
    }catch(e){
 	console.log(e);

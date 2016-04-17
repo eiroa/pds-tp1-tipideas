@@ -6,6 +6,7 @@ var jwt = require('express-jwt');
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
+var Logger = mongoose.model('Logger');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 
@@ -43,13 +44,26 @@ router.get('/', function(req, res, next) {
 
 
 router.get('/posts', function(req, res, next) {
-  Post.find(function(err, posts){
+  //-secretField2  -secretField1
+  Post.find({}, '-secretField1 -secretField2',function(err, posts){
     if(err){ 
 	return next(err);
     }
 
     res.json(posts);
   });
+
+});
+
+router.get('/activities', function(req, res, next) {
+  Logger.find(function(err, posts){
+    if(err){ 
+	return next(err);
+    }
+
+    res.json(posts);
+  });
+
 });
 
 router.get('/posts/:post', function(req, res) {
@@ -58,7 +72,6 @@ router.get('/posts/:post', function(req, res) {
     res.json(req.post);
   });
 });
-
 
 
 
@@ -74,8 +87,19 @@ router.post('/posts', auth, function(req, res, next) {
   post.save(function(err, post){
     if(err){ return next(err); }
 
+    var activity = new Logger(); 
+
+    activity.createdPost(
+        function(err){
+    		if(err){ return next(err); }
+ 	},
+	req.payload.username, 
+	new Date()
+    ); 
+
     res.json(post);
   });
+   
 });
 
 
@@ -108,14 +132,11 @@ router.post('/register', function(req, res, next){
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
-  console.log("attempting to register: "+req.body.username+ " , pass: "+req.body.password);
-  var user = new User();
-  console.log("User built");
-  user.username = req.body.username;
 
+  var user = new User();
+  user.username = req.body.username;
   user.setPassword(req.body.password)
 
-  console.log("Target made,  User: "+user.username+ " , pass: "+user.password);
 
   user.save(function (err){
     if(err){ return next(err); }
@@ -148,20 +169,21 @@ router.post('/login', function(req, res, next){
 router.put('/posts/:post/upvote', auth, function(req, res, next) {
   req.post.upvote(function(err, post){
     if (err) { return next(err); }
-
     res.json(post);
   });
 });
 
 router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next) {
+ 
+
   req.comment.upvote(function(err, comment){
     if (err) { return next(err); }
-
+    
     res.json(comment);
   });
 });
 
-router.put('/posts/:post/downvote', function(req, res, next) {
+router.put('/posts/:post/downvote', auth, function(req, res, next) {
   req.post.downvote(function(err, post){
     if (err) { return next(err); }
 

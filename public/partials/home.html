@@ -3,12 +3,29 @@
       </div>
 		
 
-<select ng-model="sortValue" style="margin-bottom:20px;">
+<div ng-show="isLoggedIn()">
+
+<select class="form-control" ng-model="ideasSort" style="margin-bottom:10px;">
+            <option value="">Select a group</option>
+		<option value="available">Available ideas</option>
+		<option value="pending">Ideas pending approval</option>
+		<option value="accepted">Accepted ideas</option>
+		<option value="rejected">Ideas rejected</option>
+  </select>
+
+<select class="form-control" ng-model="sortValue" style="margin-bottom:10px;">
             <option value="">Select a filter</option>
 		<option value="upvotes">Upvotes</option>
 		<option value="date">Date</option>
 		<option value="comments.length">Comments</option>
   </select>
+
+</div>
+
+  <h2 ng-show="ideasSort=='available'">Available Ideas</h2>
+  <h2 ng-show="ideasSort=='pending'">Ideas pending approval</h2>
+  <h2 ng-show="ideasSort=='accepted'">Accepted ideas</h2>
+  <h2 ng-show="ideasSort=='rejected'">Ideas rejected</h2>
    <div ng-show="isLoggedIn()" class="well" ng-repeat="post in posts | orderBy: sortValue">
         <span class="glyphicon glyphicon-thumbs-up"
 		style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
@@ -67,4 +84,5 @@
 	      </form>
          </div>
 
+<div class="dropup">
 

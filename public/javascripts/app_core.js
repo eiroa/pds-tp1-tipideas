@@ -158,8 +158,9 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 
 }]);
 
-app.controller('ActivityCtrl',['$scope','logger',function($scope,logger){
+app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,auth){
 	$scope.activities = logger.activities;
+	$scope.isLoggedIn = auth.isLoggedIn;
 }]);
 
 app.controller('MainCtrl', [ '$scope', 'posts','$state', '$stateParams','auth',

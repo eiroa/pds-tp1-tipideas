@@ -91,12 +91,16 @@ app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
     			});
                        };
 
-	service.getAll = function() {
-   	 return $http.get('/posts').success(function(data){
-      		angular.copy(data, service.posts);
-		console.log('posts cargados');
-		logger.getActivities();
-    		});
+	service.getAll = function(available,accepted,pending,rejected) {
+   	 return $http({
+    		url: '/posts', 
+    		method: "GET",
+    		params: {available: available, accepted:accepted,pending:pending,rejected:rejected}
+ 		}).success(function(data){
+      			angular.copy(data, service.posts);
+			console.log('posts cargados');
+			logger.getActivities();
+    		  });
   	};
 
 	service.create = function(post){
@@ -165,9 +169,34 @@ app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,a
 
 app.controller('MainCtrl', [ '$scope', 'posts','$state', '$stateParams','auth',
 function($scope,posts,$state,$stateParams,auth){
+	$scope.data = {
+    singleSelect: null,
+    multipleSelect: [],
+    option1: 'option-1',
+    ideasSort:null
+   };
+	$scope.req = function(){alert($scope.data.ideasSort.value);
+			switch ($scope.data.ideasSort.value) {
+			    case 0:
+				posts.getAll(true,false,false,false);
+				break;
+			    case 1:
+				posts.getAll(false,true,false,false);
+				break;
+			    case 2:
+				posts.getAll(false,false,true,false);
+				break;
+			    case 3:
+				posts.getAll(false,false,false,true);
+				break;
+			}
+		 }
+
+
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.posts = posts.posts;
+  $scope.types = [{value:0,name:"Ava"},{value:1,name:"Acc"},{value:2,name:"Pen"},{value:3,name:"Rej"}];
 
 
 $scope.addPost = function(){
@@ -179,6 +208,7 @@ $scope.addPost = function(){
 	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
        user: auth.username
   });
+ 
 	
 
   $scope.title ='';
@@ -262,13 +292,8 @@ function($stateProvider, $urlRouterProvider) {
       controller: 'MainCtrl',
       resolve: {
       	postPromise: ['posts','logger', function(posts,logger){
-		//Logger.getActivites();
-      		return posts.getAll();
+      		return posts.getAll(true,false,false,false);
         }]
-
-	//postPromise2: ['logger', function(logger){
-	//	return logger.getActivites();
-        //}]
       }
   });
 

@@ -9,6 +9,7 @@ var PostSchema = new mongoose.Schema({
   pending: {type: Boolean, default: true},
   accepted: {type: Boolean, default: false},
   rejected: {type: Boolean, default: false},
+  available: {type: Boolean, default: false},
   upvotes: {type: Number, default: 0},
   downvotes: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
@@ -38,5 +39,11 @@ PostSchema.methods.reject = function(cb) {
   this.save(cb);
 };
 
+
+PostSchema.methods.availabl = function(cb) {
+  this.available = true;
+  this.pending = false;
+  this.save(cb);
+};
 
 mongoose.model('Post', PostSchema);

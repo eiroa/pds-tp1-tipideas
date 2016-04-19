@@ -5,12 +5,9 @@
 
 <div ng-show="isLoggedIn()">
 
-<select class="form-control" ng-model="ideasSort" style="margin-bottom:10px;">
+<select class="form-control" ng-model="data.ideasSort"  ng-change="req()" style="margin-bottom:10px;"
+ng-options="type as type.name for type in types">
             <option value="">Select a group</option>
-		<option value="available">Available ideas</option>
-		<option value="pending">Ideas pending approval</option>
-		<option value="accepted">Accepted ideas</option>
-		<option value="rejected">Ideas rejected</option>
   </select>
 
 <select class="form-control" ng-model="sortValue" style="margin-bottom:10px;">

@@ -6,6 +6,9 @@ var PostSchema = new mongoose.Schema({
   link: String,
   date: Date,
   author: String,
+  pending: {type: Boolean, default: true},
+  accepted: {type: Boolean, default: false},
+  rejected: {type: Boolean, default: false},
   upvotes: {type: Number, default: 0},
   downvotes: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
@@ -20,6 +23,18 @@ PostSchema.methods.upvote = function(cb) {
 
 PostSchema.methods.downvote = function(cb) {
   this.downvotes -= 1;
+  this.save(cb);
+};
+
+PostSchema.methods.accept = function(cb) {
+  this.accepted = true;
+  this.pending = false;
+  this.save(cb);
+};
+
+PostSchema.methods.reject = function(cb) {
+  this.rejected = true;
+  this.pending = false;
   this.save(cb);
 };
 

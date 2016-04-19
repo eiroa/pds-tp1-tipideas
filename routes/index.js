@@ -45,7 +45,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/posts', function(req, res, next) {
   //-secretField2  -secretField1
-  Post.find({}, '-secretField1 -secretField2',function(err, posts){
+  Post.find({pending: req.query.pending}, '-secretField1 -secretField2',function(err, posts){
     if(err){ 
 	return next(err);
     }

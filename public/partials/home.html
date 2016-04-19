@@ -47,26 +47,36 @@
         </span>
 	<span am-time-ago="post.date"></span>
         <span ng-show="post.author">posted by - {{post.author}}</span>
-        <span >Posted by = {{post.user.username}}</span>
 
-  <a  style="margin-left:10px;"href="#/posts/{{post._id}}">Comments - </a>
-	<span ng-show="post.comments">
-              ({{post.comments.length}})
-          </span>
+  <a  style="margin-left:10px;"href="#/posts/{{post._id}}"> Details </a>
 </span>
-	<div class="text-right">
-             <button class="btn btn-danger text-right" ng-click="remove(post)">Delete</button>
-         </div>
+
+
+	<div class="dropdown text-right">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    	Choose an action
+    	<span class="caret"></span>
+  	</button>
+ 
+
+  	<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu">
+   	 <li><a class="text-success" href="" ng-click="enroll(post)" style="font-weight:bold;color:green;">Enroll here</a></li>
+	<li><a class="text-success" href="" ng-click="reject(post)" style="font-weight:bold;color:orange;">Reject idea</a></li>
+   	 <li role="separator" class="divider"></li>
+   	 <li><a class="text-danger "href="#" ng-click="remove(post)" style="font-weight:bold;color:red;">Delete idea</a></li>
+  	</ul>
+	</div>
+	
       </div>
 	<div ng-hide="isLoggedIn()">
-  <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
+  <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can propose a new idea.</h3>
 </div>
 
 	<div ng-show="isLoggedIn()">
 	<form ng-submit="addPost()"
                 
 		style="margin-top:30px;">
-		<h3>Add a new post</h3>
+		<h3>Propose new idea</h3>
 
 		<div class="form-group">
 		  <input type="text"

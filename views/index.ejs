@@ -42,13 +42,14 @@
   <div class="row">
 
     
-  <div class="col-md-3 col-xs-12" style="margin-top:20px;margin-left:20px;" ng-controller="ActivityCtrl">
-   <div ng-show="isLoggedIn()" class="jumbotron">
-
-    <h4   class="text-info text-center">
+  <div class="col-md-3 col-xs-12 container-fluid" style="margin-top:20px;margin-left:20px;max-height:600px;" ng-controller="ActivityCtrl">
+	 <h4   ng-show="isLoggedIn()" class="text-info text-center">
         Activity log
     </h4>
-    <div  class="well" ng-repeat="activity in activities ">
+   <div ng-show="isLoggedIn()" class="jumbotron pre-scrollable" style="max-height:600px;">
+
+   
+    <div  class="well" ng-repeat="activity in activities" >
 	
         <span >{{activity.description}} </span>
 	<span am-time-ago="activity.date"></span>

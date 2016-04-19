@@ -21,25 +21,26 @@ LoggerSchema.methods.deletedIdea = function(cb,author, date){
 	this.save(cb);
 };
 
-LoggerSchema.methods.acceptedEnrollment = function(cb,author, date){
+LoggerSchema.methods.enroll = function(cb,author, date){
 	this.author = author;
 	this.date = date;
-	this.description= author + " approved an enrollment to an idea ";
+	this.description= author + " desires to enroll to an idea ";
 	this.save(cb);
 };
 
 
-LoggerSchema.methods.rejectedIdea = function(cb,author, date){
+
+LoggerSchema.methods.rejectedEnroll = function(cb,author, date){
 	this.author = author;
 	this.date = date;
-	this.description= author + " rejected an idea ";
+	this.description= author + " rejected an enrollment ";
 	this.save(cb);
 };
 
-LoggerSchema.methods.createdPost = function(cb,author, date){
+LoggerSchema.methods.acceptEnroll = function(cb,author, date){
 	this.author = author;
 	this.date = date;
-	this.description= author + " created a post ";
+	this.description= author + " accepted an enrollment ";
 	this.save(cb);
 };
 

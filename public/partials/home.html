@@ -10,19 +10,13 @@ ng-options="type as type.name for type in types">
             <option value="">Select a group</option>
   </select>
 
-<select class="form-control" ng-model="sortValue" style="margin-bottom:10px;">
-            <option value="">Select a filter</option>
-		<option value="upvotes">Upvotes</option>
-		<option value="date">Date</option>
-		<option value="comments.length">Comments</option>
-  </select>
 
 </div>
 
   <h2 ng-show="ideasSort=='available'">Available Ideas</h2>
   <h2 ng-show="ideasSort=='pending'">Ideas pending approval</h2>
   <h2 ng-show="ideasSort=='accepted'">Accepted ideas</h2>
-  <h2 ng-show="ideasSort=='rejected'">Ideas rejected</h2>
+  <h2 ng-show="ideasSort=='deleted'">Ideas deleted</h2>
    <div ng-show="isLoggedIn()" class="well" ng-repeat="post in posts | orderBy: sortValue">
         <span class="glyphicon glyphicon-thumbs-up"
 		style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
@@ -35,18 +29,20 @@ ng-options="type as type.name for type in types">
         {{post.downvotes}}
 	<span>
         <span style="font-size:20px; margin-left:10px;">
-          <a title="Go to {{post.link}}" ng-show="post.link" href="{{post.link}}">
-            {{post.title}}
-          </a>
-          <span ng-hide="post.link">
+          <span >
             {{post.title}}
           </span>
+          
         </span>
 	<span am-time-ago="post.date"></span>
         <span ng-show="post.author">posted by - {{post.author}}</span>
 
-  <a  style="margin-left:10px;"href="#/posts/{{post._id}}"> Details </a>
-</span>
+  		<a  style="margin-left:10px;"href="#/posts/{{post._id}}"> Comments </a>
+	</span>
+	<br/>
+        <p>
+            <strong>Description:</strong> {{post.link}}
+         </p>
 
 
 	<div class="dropdown text-right">
@@ -57,10 +53,11 @@ ng-options="type as type.name for type in types">
  
 
   	<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu">
+	 <li><a class="text-info" href="" ng-click="accept(post)" style="font-weight:bold;color:green;">Accept idea</a></li>
    	 <li><a class="text-success" href="" ng-click="enroll(post)" style="font-weight:bold;color:green;">Enroll here</a></li>
-	<li><a class="text-success" href="" ng-click="reject(post)" style="font-weight:bold;color:orange;">Reject idea</a></li>
+	<li><a class="text-warning" href="" ng-click="reject(post)" style="font-weight:bold;color:orange;">Reject idea</a></li>
    	 <li role="separator" class="divider"></li>
-   	 <li><a class="text-danger "href="#" ng-click="remove(post)" style="font-weight:bold;color:red;">Delete idea</a></li>
+   	 <li><a class="text-danger "href="#" ng-click="remove(post)" style="font-weight:bold;color:red;">Destroy idea</a></li>
   	</ul>
 	</div>
 	
@@ -70,7 +67,7 @@ ng-options="type as type.name for type in types">
 </div>
 
 	<div ng-show="isLoggedIn()">
-	<form ng-submit="addPost()"
+	<form ng-submit="addPost()" id="formi"
                 
 		style="margin-top:30px;">
 		<h3>Propose new idea</h3>
@@ -82,13 +79,12 @@ ng-options="type as type.name for type in types">
 		    ng-model="title"></input>
 		</div>
 		<div class="form-group">
-		  <input type="text"
-		  class="form-control"
-		  placeholder="Link"
-		  ng-model="link"></input>
+		<textarea form ="formi" class="form-control" ng-model="link"  cols="35" wrap="soft" placeholder="Description"></textarea>
+		 
 		</div>
 		<button type="submit" class="btn btn-primary">Post</button>
 	      </form>
+		
          </div>
 
 <div class="dropup">

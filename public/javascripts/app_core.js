@@ -91,11 +91,11 @@ app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
     			});
                        };
 
-	service.getAll = function(available,accepted,pending,rejected) {
+	service.getAll = function(type) {
    	 return $http({
     		url: '/posts', 
     		method: "GET",
-    		params: {available: available, accepted:accepted,pending:pending,rejected:rejected}
+    		params: {type:type}
  		}).success(function(data){
       			angular.copy(data, service.posts);
 			console.log('posts cargados');
@@ -110,6 +110,7 @@ app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
 			service.posts.push(data);
 		});
 	};
+	
 
 	service.upvote = function(post){
 		return $http.put('/posts/'+post._id + '/upvote' , null,{
@@ -135,6 +136,33 @@ app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
 	service.removePost = function(post){
 		return $http.post('posts/remove/'+post._id);
 	};
+
+	service.accept = function(post){
+		return $http.post('posts/accept/'+post._id).success(function(data){
+			
+		});
+	};
+
+	service.deleteIdea = function(post){
+		return $http.post('posts/delete/'+post._id).success(function(data){
+			
+		});
+	};
+
+	service.enroll = function(post){
+		return $http.post('posts/enroll/'+post._id).success(function(data){
+			
+		});
+	};
+
+	
+	service.reject = function(post){
+		return $http.post('posts/reject/'+post._id).success(function(data){
+			
+		});
+	};
+
+	
         
 
 	return service;
@@ -169,34 +197,23 @@ app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,a
 
 app.controller('MainCtrl', [ '$scope', 'posts','$state', '$stateParams','auth',
 function($scope,posts,$state,$stateParams,auth){
-	$scope.data = {
-    singleSelect: null,
-    multipleSelect: [],
-    option1: 'option-1',
-    ideasSort:null
-   };
-	$scope.req = function(){alert($scope.data.ideasSort.value);
-			switch ($scope.data.ideasSort.value) {
-			    case 0:
-				posts.getAll(true,false,false,false);
-				break;
-			    case 1:
-				posts.getAll(false,true,false,false);
-				break;
-			    case 2:
-				posts.getAll(false,false,true,false);
-				break;
-			    case 3:
-				posts.getAll(false,false,false,true);
-				break;
-			}
-		 }
+   
+
+
+     $scope.req = function(){
+	posts.getAll($scope.data.ideasSort.value);
+     }
 
 
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.posts = posts.posts;
-  $scope.types = [{value:0,name:"Ava"},{value:1,name:"Acc"},{value:2,name:"Pen"},{value:3,name:"Rej"}];
+  $scope.types = [
+	{value:'available',name:"Available ideas"},
+	{value:'accepted',name:"Accepted ideas for tips"},
+	{value:'pending',name:"Ideas pending approval"},
+	{value:'deleted',name:"Deleted ideas"}
+];
 
 
 $scope.addPost = function(){
@@ -229,6 +246,22 @@ $scope.addVote = function(post){
 $scope.downVote = function(post){
 			posts.dislike('/posts/' + post._id + '/downvote',post)
                  };
+
+$scope.accept = function(post){
+		posts.accept(post);
+		};
+
+$scope.enroll = function(post){
+		posts.enroll(post);
+		};
+
+$scope.deleteIdea = function(post){
+		post.deleteIdea(post);
+		};
+
+$scope.reject = function(post){
+		post.reject(post);
+		};
 
 }]);
 
@@ -291,8 +324,8 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/partials/home.html',
       controller: 'MainCtrl',
       resolve: {
-      	postPromise: ['posts','logger', function(posts,logger){
-      		return posts.getAll(true,false,false,false);
+      	postPromise: ['posts','logger', function(posts){
+      		return posts.getAll(true,false,false,false,false);
         }]
       }
   });

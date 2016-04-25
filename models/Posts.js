@@ -1,49 +1,63 @@
 var mongoose = require('mongoose');
+var IdeaStateSchema = require('mongoose').model('IdeaState').schema;
 
-var PostSchema = new mongoose.Schema({
+var IdeaSchema = new mongoose.Schema({
   title: String,
   description: String,
   link: String,
   date: Date,
   author: String,
-  pending: {type: Boolean, default: true},
-  accepted: {type: Boolean, default: false},
-  rejected: {type: Boolean, default: false},
-  available: {type: Boolean, default: false},
+  ideaState: { type: mongoose.Schema.Types.ObjectId, ref: 'IdeaState'},
   upvotes: {type: Number, default: 0},
   downvotes: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-  user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  student: {type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 //cb = callback
-PostSchema.methods.upvote = function(cb) {
+IdeaSchema.methods.upvote = function(cb) {
   this.upvotes += 1;
   this.save(cb);
 };
 
-PostSchema.methods.downvote = function(cb) {
+IdeaSchema.methods.downvote = function(cb) {
   this.downvotes -= 1;
   this.save(cb);
 };
 
-PostSchema.methods.accept = function(cb) {
-  this.accepted = true;
-  this.pending = false;
+
+//Turns pending to accepted  - should create a TIP entity
+IdeaSchema.methods.accept = function(cb) {
+  var role = new IdeaState();
+  role.title = 'accepted';
+  this.role = role;
   this.save(cb);
 };
 
-PostSchema.methods.reject = function(cb) {
-  this.rejected = true;
-  this.pending = false;
+IdeaSchema.methods.enroll = function(cb,idea) {
+  var role = new IdeaState();
+  role.title = 'pending';
+  idea.ideaState = role;
+  console.log("enrolling");
+  idea.save(cb);
+};
+
+//Turns from pending to available
+IdeaSchema.methods.reject = function(cb) {
+  var role = new IdeaState();
+  role.title = 'available';
+  this.role = role;;
   this.save(cb);
 };
 
 
-PostSchema.methods.availabl = function(cb) {
-  this.available = true;
-  this.pending = false;
+//Turns to deleted state
+IdeaSchema.methods.delet = function(cb) {
+  var role = new IdeaState();
+  role.title = 'deleted';
+  this.role = role;
   this.save(cb);
 };
 
-mongoose.model('Post', PostSchema);
+
+mongoose.model('Post', IdeaSchema);

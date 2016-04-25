@@ -13,9 +13,13 @@ var app = express();
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/tips');
 
+require('./models/IdeaState');
+require('./models/UserRole');
 require('./models/Logger');
 require('./models/Posts');
 require('./models/Comments');
+require('./models/Tips');
+
 
 
 var passport = require('passport');

@@ -7,7 +7,7 @@ var LoggerSchema = new mongoose.Schema({
 });
 
 
-LoggerSchema.methods.createdPost = function(cb,author, date){
+LoggerSchema.methods.createIdea = function(cb,author, date){
 	this.author = author;
 	this.date = date;
 	this.description= author + " proposed a new idea ";
@@ -21,7 +21,7 @@ LoggerSchema.methods.deletedIdea = function(cb,author, date){
 	this.save(cb);
 };
 
-LoggerSchema.methods.enroll = function(cb,author, date){
+LoggerSchema.methods.enrollIdea = function(cb,author, date){
 	this.author = author;
 	this.date = date;
 	this.description= author + " desires to enroll to an idea ";
@@ -29,18 +29,25 @@ LoggerSchema.methods.enroll = function(cb,author, date){
 };
 
 
-
-LoggerSchema.methods.rejectedEnroll = function(cb,author, date){
+LoggerSchema.methods.rejectIdea= function(cb,author, date){
 	this.author = author;
 	this.date = date;
 	this.description= author + " rejected an enrollment ";
 	this.save(cb);
 };
 
-LoggerSchema.methods.acceptEnroll = function(cb,author, date){
+LoggerSchema.methods.acceptIdea = function(cb,author, date){
 	this.author = author;
 	this.date = date;
 	this.description= author + " accepted an enrollment ";
+	this.save(cb);
+};
+
+
+LoggerSchema.methods.destroy = function(cb,author, date){
+	this.author = author;
+	this.date = date;
+	this.description= author + " erased an idea ";
 	this.save(cb);
 };
 

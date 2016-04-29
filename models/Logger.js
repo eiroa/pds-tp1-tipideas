@@ -14,7 +14,7 @@ LoggerSchema.methods.createIdea = function(cb,author, date){
 	this.save(cb);
 };
 
-LoggerSchema.methods.deletedIdea = function(cb,author, date){
+LoggerSchema.methods.deleteIdea = function(cb,author, date){
 	this.author = author;
 	this.date = date;
 	this.description= author + " deleted an idea ";

@@ -256,11 +256,11 @@ $scope.enroll = function(post){
 		};
 
 $scope.deleteIdea = function(post){
-		post.deleteIdea(post);
+		posts.deleteIdea(post);
 		};
 
 $scope.reject = function(post){
-		post.reject(post);
+		posts.reject(post);
 		};
 
 }]);

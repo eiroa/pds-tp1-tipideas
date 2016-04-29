@@ -63,10 +63,9 @@ console.log("trying to get ideas with state: "+ req.query.type);
 		}).exec(function(err, posts) {
 		  posts = posts.filter(function(post) {
 		    
-		     return post.ideaState; // return only users with email matching 'type: "Gmail"' query
-		
+		     return post.ideaState; // return only ideas with parameter idea state		
 		  });
-		  console.log("posivble filtered values: "+posts);
+		  //console.log("posivble filtered values: "+posts);
 		  res.json(posts);
 	 });
 
@@ -74,10 +73,15 @@ console.log("trying to get ideas with state: "+ req.query.type);
 });
 
 router.get('/activities', function(req, res, next) {
-  Logger.find(function(err, posts){
+
+  var cutoff = new Date();
+  cutoff.setDate(cutoff.getDate()-7);
+
+  Logger.find({date: {$gte: cutoff}},function(err, posts){
     if(err){ 
 	return next(err);
     }
+
 
     res.json(posts);
   });
@@ -156,6 +160,11 @@ router.post('/posts/enroll/:post', function(req, res, next) {
 
             if (err) res.send(err);
 
+            IdeaState.findByIdAndRemove(idea.ideaState, function (err){
+    		if(err) { return next(err); }
+		console.log("available state deleted");
+ 	 	});
+
 	    var state = new IdeaState();
   		state.title = 'pending';
   		idea.ideaState = state;
@@ -164,7 +173,7 @@ router.post('/posts/enroll/:post', function(req, res, next) {
             state.save(function(err) {
                 if (err) res.send(err);
             });
-            // save the bear
+            
             idea.save(function(err) {
                 if (err) res.send(err);
             });
@@ -185,15 +194,33 @@ router.post('/posts/enroll/:post', function(req, res, next) {
 
 
 router.post('/posts/reject/:post', function(req, res, next) {
-	req.post.reject(function(err, post){
-   	 if(err){ return next(err); }
+	Post.findById(req.post._id, function(err, idea) {
 
- 	 },
-	req.post.author,
-	new Date());
+            if (err) res.send(err);
+
+	    IdeaState.findByIdAndRemove(idea.ideaState, function (err){
+    		if(err) { return next(err); }
+		console.log("pending state deleted");
+ 	 	});
+
+	    var state = new IdeaState();
+  		state.title = 'available';
+  		idea.ideaState = state;
+  		console.log("rejecting...");
+	   
+            state.save(function(err) {
+                if (err) res.send(err);
+            });
+            // 
+            idea.save(function(err) {
+                if (err) res.send(err);
+            });
+            console.log("idea rejected");
+
+        });
 
 	var activity = new Logger(); 
-
+        console.log("trying to save log for reject");
         activity.rejectIdea(
         	function(err){
     			if(err){ return next(err); }
@@ -227,15 +254,32 @@ router.post('/posts/delete/:post', function(req, res, next) {
 router.post('/posts/accept/:post', function(req, res, next) {
 	
 	
-  	req.post.accept(function(err, post){
-   	 if(err){ return next(err); }
+  	Post.findById(req.post._id, function(err, idea) {
 
- 	 },
-	req.post.author,
-	new Date());
+            if (err) res.send(err);
+
+	    IdeaState.findByIdAndRemove(idea.ideaState, function (err){
+    		if(err) { return next(err); }
+		console.log("pending state deleted");
+ 	 	});
+
+	    var state = new IdeaState();
+  		state.title = 'accepted';
+  		idea.ideaState = state;
+  		console.log("accepting...");
+	   
+            state.save(function(err) {
+                if (err) res.send(err);
+            });
+            // 
+            idea.save(function(err) {
+                if (err) res.send(err);
+            });
+
+        });
 
 	var activity = new Logger(); 
-
+        console.log("trying to save log for accept");
         activity.acceptIdea(
         	function(err){
     			if(err){ return next(err); }
@@ -243,7 +287,6 @@ router.post('/posts/accept/:post', function(req, res, next) {
 		req.post.author, 
 		new Date()
         ); 
-
 	res.sendStatus(200);
 });
 

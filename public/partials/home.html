@@ -17,31 +17,31 @@ ng-options="type as type.name for type in types">
   <h2 ng-show="ideasSort=='pending'">Ideas pending approval</h2>
   <h2 ng-show="ideasSort=='accepted'">Accepted ideas</h2>
   <h2 ng-show="ideasSort=='deleted'">Ideas deleted</h2>
-   <div ng-show="isLoggedIn()" class="well" ng-repeat="post in posts | orderBy: sortValue">
+   <div ng-show="isLoggedIn()" class="well" ng-repeat="idea in ideas | orderBy: sortValue">
         <span class="glyphicon glyphicon-thumbs-up"
 		style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
-          ng-click="addVote(post)"></span>
-        {{post.upvotes}}
+          ng-click="addVote(idea)"></span>
+        {{idea.upvotes}}
 	<span>
 	<span class="glyphicon glyphicon-thumbs-down"
 		style="color:red;cursor:pointer;font-size:18px; margin-left:15px;"
-          ng-click="downVote(post)"></span>
-        {{post.downvotes}}
+          ng-click="downVote(idea)"></span>
+        {{idea.downvotes}}
 	<span>
         <span style="font-size:20px; margin-left:10px;">
           <span >
-            {{post.title}}
+            {{idea.title}}
           </span>
           
         </span>
-	<span am-time-ago="post.date"></span>
-        <span ng-show="post.author">posted by - {{post.author}}</span>
+	<span am-time-ago="idea.date"></span>
+        <span ng-show="idea.author">posted by - {{idea.author}}</span>
 
-  		<a  style="margin-left:10px;"href="#/posts/{{post._id}}"> Comments </a>
+  		<a  style="margin-left:10px;"href="#/ideas/{{idea._id}}"> Comments </a>
 	</span>
 	<br/>
         <p>
-            <strong>Description:</strong> {{post.link}}
+            <strong>Description:</strong> {{idea.link}}
          </p>
 
 
@@ -53,11 +53,21 @@ ng-options="type as type.name for type in types">
  
 
   	<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu">
-	 <li><a class="text-info" href="" ng-click="accept(post)" style="font-weight:bold;color:green;">Accept idea</a></li>
-   	 <li><a class="text-success" href="" ng-click="enroll(post)" style="font-weight:bold;color:green;">Enroll here</a></li>
-	<li><a class="text-warning" href="" ng-click="reject(post)" style="font-weight:bold;color:orange;">Reject idea</a></li>
+	 <li ng-show="data.ideasSort.value == 'pending'">
+			<a class="text-info" href="" ng-click="accept(idea)" style="font-weight:bold;color:green;">Accept idea</a>
+        </li>
+   	 <li ng-show="data.ideasSort.value == 'available'" >
+		<a class="text-success" href="" ng-click="enroll(idea)" style="font-weight:bold;color:green;">Enroll here</a>
+	</li>
+	<li ng-show="data.ideasSort.value == 'pending'">
+		<a class="text-warning" href="" ng-click="reject(idea)" style="font-weight:bold;color:orange;">Reject idea</a>
+	</li>
+	<li ng-show="data.ideasSort.value == 'available'" role="separator" class="divider"></li>
+   	 <li ng-show="data.ideasSort.value == 'available'" >
+		<a class="text-danger "href="#" ng-click="deleteIdea(idea)" style="font-weight:bold;color:red;">Delete idea</a>
+	</li>
    	 <li role="separator" class="divider"></li>
-   	 <li><a class="text-danger "href="#" ng-click="remove(post)" style="font-weight:bold;color:red;">Destroy idea</a></li>
+   	 <li><a class="text-danger "href="#" ng-click="remove(idea)" style="font-weight:bold;color:red;">Destroy idea</a></li>
   	</ul>
 	</div>
 	
@@ -67,7 +77,7 @@ ng-options="type as type.name for type in types">
 </div>
 
 	<div ng-show="isLoggedIn()">
-	<form ng-submit="addPost()" id="formi"
+	<form ng-submit="addIdea()" id="formi"
                 
 		style="margin-top:30px;">
 		<h3>Propose new idea</h3>

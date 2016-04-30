@@ -68,9 +68,9 @@ app.factory('logger',['$http', 'auth',function($http,auth){
 	return service;
 }]);
 
-app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
+app.factory('ideas',['$http', 'auth','logger',function($http,auth,logger){
 	var service = {
-		posts:[]
+		ideas:[]
 	};
 	
 	service.like = function(route,likeable){
@@ -93,71 +93,72 @@ app.factory('posts',['$http', 'auth','logger',function($http,auth,logger){
 
 	service.getAll = function(type) {
    	 return $http({
-    		url: '/posts', 
+    		url: '/ideas', 
     		method: "GET",
     		params: {type:type}
  		}).success(function(data){
-      			angular.copy(data, service.posts);
-			console.log('posts cargados');
+                        console.log(data);
+      			angular.copy(data, service.ideas);
+			console.log('ideas loaded');
 			logger.getActivities();
     		  });
   	};
 
-	service.create = function(post){
-		return $http.post('/posts',post,{
+	service.create = function(idea){
+		return $http.post('/ideas',idea,{
 		   headers : {Authorization: 'Bearer '+auth.getToken()}			
 		}).success(function(data){
-			service.posts.push(data);
+			service.ideas.push(data);
 		});
 	};
 	
 
-	service.upvote = function(post){
-		return $http.put('/posts/'+post._id + '/upvote' , null,{
+	service.upvote = function(idea){
+		return $http.put('/ideas/'+idea._id + '/upvote' , null,{
 			headers : {Authorization: 'Bearer '+auth.getToken()}	
 		})
 			.success(function(data){
-				posts.upvotes +=1;
+				ideas.upvotes +=1;
 			});
 	};
 
 	service.get = function(id){
-				return $http.get('/posts/'+id).then(function(res){
+				return $http.get('/ideas/'+id).then(function(res){
 					return res.data;
 				});
 			};
 
 	service.addComment = function(id,comment){
-		return $http.post('/posts/'+id+'/comments',comment, {
+		return $http.post('/ideas/'+id+'/comments',comment, {
 		headers : {Authorization: 'Bearer '+auth.getToken()}			
 		});
 	};
 
-	service.removePost = function(post){
-		return $http.post('posts/remove/'+post._id);
+	service.removeidea = function(idea){
+		return $http.post('ideas/remove/'+idea._id);
 	};
 
-	service.accept = function(post){
-		return $http.post('posts/accept/'+post._id).success(function(data){
+	service.accept = function(idea){
+		return $http.post('ideas/accept/'+idea._id).success(function(data){
 			
 		});
 	};
 
-	service.deleteIdea = function(post){
-		return $http.post('posts/delete/'+post._id).success(function(data){
+	service.deleteIdea = function(idea){
+		return $http.post('ideas/delete/'+idea._id).success(function(data){
 			
 		});
 	};
 
-	service.enroll = function(post){
-		return $http.post('posts/enroll/'+post._id).success(function(data){
+	service.enroll = function(idea){
+		return $http.post('ideas/enroll/'+idea._id).success(function(data){
 			
 		});
 	};
 
 	
-	service.reject = function(post){
-		return $http.post('posts/reject/'+post._id).success(function(data){
+	service.reject = function(idea){
+		return $http.post('ideas/reject/'+idea._id).success(function(data){
 			
 		});
 	};
@@ -195,19 +196,19 @@ app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,a
 	$scope.isLoggedIn = auth.isLoggedIn;
 }]);
 
-app.controller('MainCtrl', [ '$scope', 'posts','$state', '$stateParams','auth',
-function($scope,posts,$state,$stateParams,auth){
+app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth',
+function($scope,ideas,$state,$stateParams,auth){
    
 
 
      $scope.req = function(){
-	posts.getAll($scope.data.ideasSort.value);
+	ideas.getAll($scope.data.ideasSort.value);
      }
 
 
   $scope.isLoggedIn = auth.isLoggedIn;
 
-  $scope.posts = posts.posts;
+  $scope.ideas = ideas.ideas;
   $scope.types = [
 	{value:'available',name:"Available ideas"},
 	{value:'accepted',name:"Accepted ideas for tips"},
@@ -216,10 +217,10 @@ function($scope,posts,$state,$stateParams,auth){
 ];
 
 
-$scope.addPost = function(){
+$scope.addIdea = function(){
   if(!$scope.title || $scope.title === '') { return; }
-  console.log('posting idea by '+auth.currentUser());
-  posts.create({
+  console.log('ideaing idea by '+auth.currentUser());
+  ideas.create({
 	title: $scope.title, 
 	link: $scope.link,
 	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
@@ -232,70 +233,83 @@ $scope.addPost = function(){
   $scope.link ='';
 };
 
-$scope.remove = function(post){
-	posts.removePost(post).success(function(data){
-				console.log("post borrado");
+$scope.remove = function(idea){
+	ideas.removeidea(idea).success(function(data){
+				console.log("idea borrada");
 				 $state.reload();
+        removeIdea(idea);
+		
 	});
 };
 
-$scope.addVote = function(post){
-			posts.like('/posts/' + post._id + '/upvote',post)
+$scope.addVote = function(idea){
+			ideas.like('/ideas/' + idea._id + '/upvote',idea)
                  };
 
-$scope.downVote = function(post){
-			posts.dislike('/posts/' + post._id + '/downvote',post)
+$scope.downVote = function(idea){
+			ideas.dislike('/ideas/' + idea._id + '/downvote',idea)
                  };
 
-$scope.accept = function(post){
-		posts.accept(post);
+function removeIdea(idea){
+	var index = ideas.ideas.indexOf(idea);
+  			ideas.ideas.splice(index, 1); 
+} 
+
+$scope.accept = function(idea){
+		ideas.accept(idea);
+		 removeIdea(idea);
+		};
+                
+
+
+$scope.enroll = function(idea){
+		ideas.enroll(idea);
+		removeIdea(idea);
 		};
 
-$scope.enroll = function(post){
-		posts.enroll(post);
+$scope.deleteIdea = function(idea){
+		ideas.deleteIdea(idea);
+		removeIdea(idea);
 		};
 
-$scope.deleteIdea = function(post){
-		posts.deleteIdea(post);
-		};
-
-$scope.reject = function(post){
-		posts.reject(post);
+$scope.reject = function(idea){
+		ideas.reject(idea);
+		removeIdea(idea);
 		};
 
 }]);
 
 
-app.controller('PostsCtrl', [
+app.controller('ideasCtrl', [
 '$scope',
-'posts',
-'post',
+'ideas',
+'idea',
 'auth',
-function($scope,posts,post,auth){
+function($scope,ideas,idea,auth){
 
-	$scope.post = post;
+	$scope.idea = idea;
 	$scope.isLoggedIn = auth.isLoggedIn;
 	
 	
 	$scope.addComment = function(){
 	  if($scope.body === '') { return; }
 
-	  posts.addComment(post._id, {
+	  ideas.addComment(idea._id, {
     		body: $scope.body,
     		author: 'user',
 		date: Date.now()
   		}).success(function(comment) {
-    			$scope.post.comments.push(comment);
+    			$scope.idea.comments.push(comment);
  	 });
 
 	  $scope.body = '';
 	};
 	
 	$scope.addVote = function(comment){
-			posts.like('/posts/' + post._id + '/comments/'+comment._id+'/upvote',comment)
+			ideas.like('/ideas/' + idea._id + '/comments/'+comment._id+'/upvote',comment)
                  };
 	$scope.downVote = function(comment){
-			posts.dislike('/posts/' + post._id + '/comments/'+comment._id+'/downvote',comment)
+			ideas.dislike('/ideas/' + idea._id + '/comments/'+comment._id+'/downvote',comment)
                  };
 }]);
 
@@ -324,21 +338,21 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/partials/home.html',
       controller: 'MainCtrl',
       resolve: {
-      	postPromise: ['posts','logger', function(posts){
-      		return posts.getAll(true,false,false,false,false);
+      	ideaPromise: ['ideas','logger', function(ideas){
+      		return ideas.getAll(true,false,false,false,false);
         }]
       }
   });
 
 
   $stateProvider
-   .state('posts', {
-    url: '/posts/{id}',
-    templateUrl: '/partials/posts.html',
-    controller: 'PostsCtrl',
+   .state('ideas', {
+    url: '/ideas/{id}',
+    templateUrl: '/partials/ideas.html',
+    controller: 'ideasCtrl',
     resolve: {
-    	post: ['$stateParams', 'posts', function($stateParams, posts) {
-          return posts.get($stateParams.id);
+    	idea: ['$stateParams', 'ideas', function($stateParams, ideas) {
+          return ideas.get($stateParams.id);
     }]
   }
 });

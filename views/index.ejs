@@ -10,11 +10,11 @@
  <script src="/javascripts/ui-router.js"></script>
  <script src="/javascripts/moment.js"></script>
  <script src="/javascripts/angular-moment.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+ <link  href="/stylesheets/bootstrap-select.min.css" rel="stylesheet">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-
+ <script src="/javascripts/bootstrap-select.min.js"></script>
+  <!-- inject:js   -->
+  <!-- endinject   -->
 
  </head>
 
@@ -23,17 +23,17 @@
 
  <nav class="navbar navbar-default" ng-controller="NavCtrl">
     <ul class="nav navbar-nav">
-      <li ng-show="isLoggedIn()"><a> <strong>{{ currentUser() }}</strong></a></li>
+      <li ng-show="isLoggedIn()"><a> <strong id="user-id">{{ currentUser() }}</strong></a></li>
       <li ng-hide="isLoggedIn()">
      <a href="/#/register"><button class="btn btn-info" >Register</button></a>
     </li>
     </ul>
     <ul class="nav navbar-nav pull-right">
     <li ng-show="isLoggedIn()">
-      <button class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Log Out</button>
+      <button class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Logout</button>
     </li>
     <li ng-hide="isLoggedIn()">
-     <a href="/#/login"><button class="btn btn-success" >Log In</button></a>
+     <a href="/#/login"><button class="btn btn-success" >Login</button></a>
     </li>
     </ul>
   </nav>

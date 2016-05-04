@@ -12,6 +12,21 @@ var Logger = mongoose.model('Logger');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 
+function validateProfessor(req,res,next){
+       
+	
+         User.findOne({ username: req.payload.username }).populate('userRole').exec( function (err, user) {
+           if (err) { return next(err); }
+		console.log("user : " +user.username  + "with role " + user.userRole.title + " is attempting to create a new idea ");
+		if(user.userRole.title != 'pro' && user.userRole.title != 'dir'){
+			res.sendStatus(403);
+                }else{
+			next();
+		}
+      		
+         });
+	  
+}
 
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id);
@@ -102,8 +117,7 @@ router.get('/ideas/:idea', function(req, res) {
 // idea METHODS //
 
 
-router.post('/ideas', auth, function(req, res, next) {
-  var result;
+router.post('/ideas', auth, validateProfessor,function(req, res, next) {
   var idea = new Idea(req.body);
   idea.author = req.payload.username;
    
@@ -333,8 +347,20 @@ router.post('/register', function(req, res, next){
   }
 
   var user = new User();
+  var userRole = new UserRole();
+
+  userRole.title='dir';
+  user.userRole = userRole;
+   
+  
+
+  userRole.save(function(err){ 
+ 	if(err){return next(err);}
+  });
+   
+  console.log("new role saved: " + userRole.title);
   user.username = req.body.username;
-  user.setPassword(req.body.password)
+  user.setPassword(req.body.password);
 
 
   user.save(function (err){
@@ -346,10 +372,10 @@ router.post('/register', function(req, res, next){
 
 
 router.post('/login', function(req, res, next){
+ console.log("executing login");
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
-
   passport.authenticate('local', function(err, user, info){
     if(err){ return next(err); }
 

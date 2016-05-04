@@ -40,6 +40,7 @@ app.factory('auth',['$http','$window',function($http,$window){
 	};
 
 	auth.logIn = function(user){
+                console.log("executing login");
   		return $http.post('/login', user).success(function(data){
     			auth.saveToken(data.token);
   			});
@@ -188,6 +189,7 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 			$state.go('home');		
 		});	
 	};
+	$scope.currentUser = auth.currentUser;
 
 }]);
 
@@ -276,6 +278,8 @@ $scope.reject = function(idea){
 		ideas.reject(idea);
 		removeIdea(idea);
 		};
+
+$scope.currentUser = auth.currentUser;
 
 }]);
 
@@ -366,7 +370,8 @@ function($stateProvider, $urlRouterProvider) {
       $state.go('home');
     }
   }]
-})
+});
+
 $stateProvider.state('register', {
   url: '/register',
   templateUrl: '/partials/register.html',
@@ -376,7 +381,18 @@ $stateProvider.state('register', {
       $state.go('home');
     }
   }]
-});	
+});
+
+$stateProvider.state('users', {
+  url: '/users',
+  templateUrl: '/partials/users.html',
+  controller: 'UserCtrl',
+  onEnter: ['$state', 'auth', function($state, auth){
+    if(auth.isLoggedIn()){
+      $state.go('home');
+    }
+  }]
+});		
 
   $urlRouterProvider.otherwise('home');
 }]);

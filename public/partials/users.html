@@ -1,5 +1,5 @@
 
-<div class="page-header">
+<div ng-show="isLoggedIn()" class="page-header">
 	
     <h3>
       Users
@@ -8,24 +8,40 @@
 </div>
 
  
-  <div ng-repeat="user in users ">
+  <div ng-show="isLoggedIn()" ng-repeat="user in users " class="well">
        
+    
+<span >
+      Username:
+    </span>
     <span style="color:blue">
       {{user.username}} 
     </span>
-    <span style="font-size:20px; margin-left:10px;">
-      {{user.userRole.title}}
-    </span>
-  </div>
 
-<div ng-hide="isLoggedIn()">
-  <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
+    <span style="padding:15px;">
+      Current Role: 
+    </span>
+    <strong style="color:red">
+      {{user.userRole.title}}
+    </strong>
+
+   <div class="dropdown text-right">
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Select a Role
+    <span class="caret"></span>
+  </button>
+ 
+  <ul class="dropdown-menu pull-right">
+    <li ng-repeat="role in roles"><a href="" ng-click="changeRole(user,role)">{{role.name}}</a></li>
+  </ul>
 </div>
+     
+  </div>
 
 
 </br>
 </br>
 	
-<a class="btn btn-primary" style="margin-top:30px;"href="#/home">Back to Main Page</a>
+<a ng-show="isLoggedIn()"class="btn btn-primary" style="margin-top:30px;"href="#/home">Back to Main Page</a>
 	
  

@@ -34,8 +34,8 @@ app.factory('auth',['$http','$window',function($http,$window){
 	};
 	
 	auth.register = function(user){
-  		return $http.post('/register', user).success(function(data){
-    				auth.saveToken(data.token);
+  		return $http.post('/register', user).success(function(){
+    				console.log("user succesfully registered");
  				 });
 	};
 
@@ -135,19 +135,22 @@ app.factory('ideas',['$http', 'auth','logger',function($http,auth,logger){
 		});
 	};
 
-	service.removeidea = function(idea){
-		return $http.post('ideas/remove/'+idea._id);
+
+	service.removeIdea = function(idea){
+                console.log("sending removal of idea with token "+ auth.getToken());
+		return $http.post('ideas/remove/'+idea._id,null,{
+		   headers : {Authorization: 'Bearer '+auth.getToken()}			
+		});
 	};
 
 	service.accept = function(idea){
 		return $http.post('ideas/accept/'+idea._id).success(function(data){
-			
 		});
 	};
 
 	service.deleteIdea = function(idea){
-		return $http.post('ideas/delete/'+idea._id).success(function(data){
-			
+		return $http.post('ideas/delete/'+idea._id,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
+	
 		});
 	};
 
@@ -171,6 +174,31 @@ app.factory('ideas',['$http', 'auth','logger',function($http,auth,logger){
 }]);
 
 
+app.factory('users',['$http', 'auth',function($http,auth){
+	var service = {
+		users:[]
+	};
+	
+	service.getAll = function(){
+		return $http.get('/users').success(function(data){
+      			angular.copy(data, service.users);
+			console.log('users loaded');
+    		});
+        };
+
+	service.changeRole = function(user,role){
+		return $http.post('/users/changeRole',{ _id :user._id, value:role.value},{
+		   headers : {Authorization: 'Bearer '+auth.getToken()}			
+		}).success(function(){
+			user.userRole.title=role.value;
+		});
+	};
+
+
+	return service;
+}]);
+
+
 
 app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth){
 	$scope.user = {};
@@ -178,8 +206,8 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 		auth.register($scope.user).error(function(error){
 			$scope.error = error;
 		}).then(function(){
-			$state.go('home');
-		 });	
+			$scope.registered = true;
+		});	
 	};
 	
 	$scope.logIn = function(){
@@ -221,13 +249,18 @@ function($scope,ideas,$state,$stateParams,auth){
 
 $scope.addIdea = function(){
   if(!$scope.title || $scope.title === '') { return; }
-  console.log('ideaing idea by '+auth.currentUser());
   ideas.create({
 	title: $scope.title, 
 	link: $scope.link,
 	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
        user: auth.username
-  });
+  }).error(function(error,status){
+        if(status==403){
+		$scope.error = {message:""};
+		$scope.error.message = "Your user is not authorized for this action";
+	}
+		
+});
  
 	
 
@@ -236,7 +269,7 @@ $scope.addIdea = function(){
 };
 
 $scope.remove = function(idea){
-	ideas.removeidea(idea).success(function(data){
+	ideas.removeIdea(idea).success(function(data){
 				console.log("idea borrada");
 				 $state.reload();
         removeIdea(idea);
@@ -317,6 +350,33 @@ function($scope,ideas,idea,auth){
                  };
 }]);
 
+
+
+app.controller('UserCtrl', [
+'$scope',
+'users',
+'auth',
+function($scope,users,auth){
+
+	$scope.users = users.users;
+	$scope.isLoggedIn = auth.isLoggedIn;
+
+
+    $scope.changeRole = function(user,role){
+        users.changeRole(user,role);
+     }
+
+  $scope.roles = [
+	{value:'director',name:"Director"},
+	{value:'professor',name:"Professor"},
+	{value:'student',name:"Student"},
+	{value:'pending',name:"Pending"},
+	{value:'disabled',name:"Disabled"}
+];
+	
+	
+}]);
+
 app.controller('NavCtrl', [
 '$scope',
 'auth',
@@ -343,7 +403,7 @@ function($stateProvider, $urlRouterProvider) {
       controller: 'MainCtrl',
       resolve: {
       	ideaPromise: ['ideas','logger', function(ideas){
-      		return ideas.getAll(true,false,false,false,false);
+      		return ideas.getAll('available');
         }]
       }
   });
@@ -388,10 +448,15 @@ $stateProvider.state('users', {
   templateUrl: '/partials/users.html',
   controller: 'UserCtrl',
   onEnter: ['$state', 'auth', function($state, auth){
-    if(auth.isLoggedIn()){
+    if(!auth.isLoggedIn()){
       $state.go('home');
     }
-  }]
+  }],
+    resolve: {
+    	usersPromise: ['$stateParams', 'users', function($stateParams, users) {
+          return users.getAll();
+    	}]
+   }
 });		
 
   $urlRouterProvider.otherwise('home');

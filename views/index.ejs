@@ -62,8 +62,8 @@
     <ui-view></ui-view>
   </div>
   
-  <div class="col-md-2 col-xs-12" style="margin-top:20px;" >
-   <div  class="jumbotron">
+  <div  ng-controller="NavCtrl"   ng-show="isLoggedIn()" class="col-md-2 col-xs-12" style="margin-top:20px;" >
+   <div class="jumbotron">
 
     <h4   class="text-info text-center">
         Actions
@@ -73,14 +73,16 @@
 		
 
 
-<div class="dropdown text-center">
-  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Future Actions
-    <span class="caret"></span>
-  </button>
- 
-
-</div>
+	<div class="dropdown text-center">
+<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	    Future Actions
+	    <span class="caret"></span>
+	  </button>
+	 
+	  <ul class="dropdown-menu">
+	    <li><a href="/#/users">User administration</a></li>
+	  </ul>
+	</div>
 
    </div>
 

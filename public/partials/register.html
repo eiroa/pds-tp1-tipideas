@@ -6,8 +6,13 @@
     <span>{{ error.message }}</span>
   </div>
 
+  <div ng-show="registered" class="alert alert-success row">
+    <span>New user succesfully registered!. Before start using the site, the director must activate your user first.</span>
+  </div>
+
   <form ng-submit="register()"
-    style="margin-top:30px;">
+    style="margin-top:30px;"
+    ng-hide="registered">
     <h3>Register</h3>
 
     <div class="form-group">

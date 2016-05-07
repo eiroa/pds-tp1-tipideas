@@ -15,6 +15,9 @@ passport.use(new LocalStrategy(
       if (!user.validPassword(password)) {
         return done(null, false, { message: 'Incorrect password.' });
       }
+      if (user.userRole.title == 'pending') {
+        return done(null, false, { message: 'Your user has to be activated first. Please contact the director for more info' });
+      }
       console.log("user "+ user.username +  " logged " +  " with role " + user.userRole.title );
       return done(null, user);
     });

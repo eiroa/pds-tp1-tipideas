@@ -17,8 +17,22 @@ function validateProfessor(req,res,next){
 	
          User.findOne({ username: req.payload.username }).populate('userRole').exec( function (err, user) {
            if (err) { return next(err); }
-		console.log("user : " +user.username  + "with role " + user.userRole.title + " is attempting to create a new idea ");
-		if(user.userRole.title != 'pro' && user.userRole.title != 'dir'){
+		if(user.userRole.title != 'professor' && user.userRole.title != 'director'){
+			res.sendStatus(403);
+                }else{
+			next();
+		}
+      		
+         });
+	  
+}
+
+function validateDirector(req,res,next){
+       
+	
+         User.findOne({ username: req.payload.username }).populate('userRole').exec( function (err, user) {
+           if (err) { return next(err); }
+		if(user.userRole.title != 'director'){
 			res.sendStatus(403);
                 }else{
 			next();
@@ -30,6 +44,7 @@ function validateProfessor(req,res,next){
 
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id);
+  console.log("idea taken");
 
   query.exec(function (err, idea){
     if (err) { return next(err); }
@@ -89,8 +104,8 @@ console.log("trying to get ideas with state: "+ req.query.type);
 
 router.get('/activities', function(req, res, next) {
 
-  var cutoff = new Date();
-  cutoff.setDate(cutoff.getDate()-7);
+  var cutoff = new Date();  
+  cutoff.setDate(cutoff.getDate()-7);  // seteamos un corte de fecha que sea una semana previa al dia que se ejecute la ruta
 
   Logger.find({date: {$gte: cutoff}},function(err, ideas){
     if(err){ 
@@ -100,6 +115,18 @@ router.get('/activities', function(req, res, next) {
 
     res.json(ideas);
   });
+
+});
+
+router.get('/users', function(req, res, next) {
+
+//Dame todos los usuarios, no me muestres el hash y populame el userRole
+  User.find().select('-hash').populate({
+		  path: 'userRole'
+		}).exec(function(err, users) {
+			if(err){ return next(err);}
+		  res.json(users);
+	 });
 
 });
 
@@ -164,6 +191,35 @@ router.post('/ideas/:idea/comments', auth, function(req, res, next) {
       		res.json(comment);
     	});
   });
+
+});
+
+router.post('/users/changeRole', auth, function(req, res, next) {
+	
+	User.findById(req.body._id, function(err, user) {
+
+		  if (err) res.send(err);
+
+		    UserRole.findByIdAndRemove(user.userRole, function (err){
+	    		if(err) { return next(err); }
+			console.log("previous role deleted");
+	 	 	});
+
+		    var role = new UserRole();
+	  		role.title = req.body.value;
+	  		user.userRole = role;
+	  		console.log("changing role to "+role.title);
+		   
+		    role.save(function(err) {
+		        if (err) res.send(err);
+		    });
+		    // 
+		    user.save(function(err) {
+		        if (err) res.send(err);
+		    }); 
+		    return res.sendStatus(200);
+
+        });
 
 });
 
@@ -323,7 +379,7 @@ router.post('/ideas/accept/:idea', function(req, res, next) {
 });
 
 
-router.post('/ideas/remove/:idea', function(req, res, next) {
+router.post('/ideas/remove/:idea',auth, validateDirector,function(req, res, next) {
 	Idea.findByIdAndRemove(req.idea.id, function (err){
     	if(err) { return next(err); }
 
@@ -349,7 +405,7 @@ router.post('/register', function(req, res, next){
   var user = new User();
   var userRole = new UserRole();
 
-  userRole.title='dir';
+  userRole.title='pending';
   user.userRole = userRole;
    
   

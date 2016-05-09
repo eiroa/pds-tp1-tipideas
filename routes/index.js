@@ -83,12 +83,14 @@ console.log("trying to get ideas with state: "+ req.query.type);
 // Pesimo manejo de collecciones
 
 
+//Dame las ideas, populame el estado, devolve las que coincidan con el estado X, y luego popula las materias
+
 	Idea.find().populate({
 		  path: 'ideaState',
 		  match: {
 		    title: req.query.type
 		  }
-		}).exec(function(err, ideas) {
+		}).populate('subjects').exec(function(err, ideas) {
 		  ideas = ideas.filter(function(idea) {
 		    
 		     return idea.ideaState; // return only ideas with parameter idea state		
@@ -274,6 +276,8 @@ router.post('/subjects/delete', auth, validateDirector, function(req, res, next)
 router.post('/ideas', auth, validateProfessor,function(req, res, next) {
   var idea = new Idea(req.body); //atencion, la lista de ids de materias viene tambien
   idea.author = req.payload.username;
+
+  console.log("subjects:received "+ idea.subjects);
    
   var ideaState = new IdeaState();
   ideaState.make(function(err){

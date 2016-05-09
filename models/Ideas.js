@@ -11,6 +11,7 @@ var IdeaSchema = new mongoose.Schema({
   upvotes: {type: Number, default: 0},
   downvotes: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+  links: [String],
   student: {type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 

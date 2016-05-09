@@ -347,7 +347,7 @@ router.post('/ideas/:idea/comments', auth, function(req, res, next) {
 
 
 
-router.post('/ideas/enroll/:idea', function(req, res, next) {
+router.post('/ideas/enroll/:idea', validateStudent, function(req, res, next) {
        console.log("enrolling idea-> "+req.idea.author+ " " + req.idea.title);
 
          Idea.findById(req.idea._id, function(err, idea) {
@@ -387,7 +387,7 @@ router.post('/ideas/enroll/:idea', function(req, res, next) {
 });
 
 
-router.post('/ideas/reject/:idea', function(req, res, next) {
+router.post('/ideas/reject/:idea', validateDirector, function(req, res, next) {
 	Idea.findById(req.idea._id, function(err, idea) {
 
             if (err) res.send(err);
@@ -425,7 +425,7 @@ router.post('/ideas/reject/:idea', function(req, res, next) {
 	res.sendStatus(200);
 });
 
-router.post('/ideas/delete/:idea', function(req, res, next) {
+router.post('/ideas/delete/:idea', validateDirector,function(req, res, next) {
 
          Idea.findById(req.idea._id, function(err, idea) {
 
@@ -463,7 +463,7 @@ router.post('/ideas/delete/:idea', function(req, res, next) {
 	res.sendStatus(200);
 });
 
-router.post('/ideas/accept/:idea', function(req, res, next) {
+router.post('/ideas/accept/:idea', validateDirector,function(req, res, next) {
 	
 	
   	Idea.findById(req.idea._id, function(err, idea) {

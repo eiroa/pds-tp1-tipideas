@@ -1,4 +1,4 @@
-var app = angular.module('tips', ['ui.router','angularMoment']);
+var app = angular.module('tips', ['ui.router','angularMoment','ngTagsInput']);
 
 app.factory('auth',['$http','$window',function($http,$window){
 	var auth = {};
@@ -371,6 +371,11 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 		}
 	}
 
+
+	$scope.noTagAdd = function(){return false;}	
+
+	$scope.noTagRemove = function(){return false;}
+
      $scope.urlRegex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
      $scope.req = function(){
@@ -389,6 +394,7 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
   $scope.subjects = subjects.subjects;
   $scope.subjectsSelected = [];
   $scope.links = [];
+  $scope.newTags = [];
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.ideas = ideas.ideas;
@@ -425,12 +431,19 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 
 $scope.addIdea = function(){
   if(!$scope.title || $scope.title === '') { return; }
+
+
+	for (i = 0; i < ($scope.tags).length; i++) {
+			$scope.newTags.push(($scope.tags)[i].text);
+		}
+
   ideas.create({
 	title: $scope.title, 
 	description: $scope.description,
 	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
 	subjects: $scope.subjectsSelected,
 	links: $scope.links,
+	tags: $scope.newTags,
         user: auth.username
   }).error(function(error,status){
         if(status==403){
@@ -444,6 +457,7 @@ $scope.addIdea = function(){
   $scope.description ='';
   $scope.links=[];
   $scope.subjectsSelected = [];
+  $scope.newTags = [];
 };
 
 $scope.remove = function(idea){

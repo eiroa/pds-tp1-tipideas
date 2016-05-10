@@ -4,7 +4,6 @@ var IdeaStateSchema = require('mongoose').model('IdeaState').schema;
 var IdeaSchema = new mongoose.Schema({
   title: String,
   description: String,
-  link: String,
   date: Date,
   author: String,
   ideaState: { type: mongoose.Schema.Types.ObjectId, ref: 'IdeaState'},

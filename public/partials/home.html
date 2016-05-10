@@ -50,8 +50,13 @@ ng-options="type as type.name for type in types">
 			    </div>
  			 </form>
 
+		<div class="list-group"> 
+		  <h4 ng-show="(idea.links).length>0">Links </h4>
+		  <a target="_blank"class="list-group-item" href="{{formatLink(link)}}"  ng-repeat="link in idea.links">{{link}} </a>
+		</div>
+
         <p>
-            <strong>Description:</strong> {{idea.link}}
+            <strong>Description:</strong> {{idea.description}}
          </p>
 
 
@@ -102,32 +107,59 @@ ng-options="type as type.name for type in types">
 		  <input type="text"
 		    class="form-control"
 		    placeholder="Title"
-		    ng-model="title"></input>
+		    ng-model="title" required></input>
 		</div>
 		<div class="form-group">
-			<textarea form ="formi" class="form-control" ng-model="link"  cols="35" wrap="soft" placeholder="Description"></textarea>
+			<textarea form ="formi" class="form-control" ng-model="description"  cols="35" wrap="soft" placeholder="Description"></textarea>
 		 
 		</div>
 		
-              <div class="form-group">
+              <div class="form-group well">
 	   	<div class="dropdown ">
 	           <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			    Select subjects
 			    <span class="caret"></span>
-			  </button>
-			 
+                  </button>
+			 <h4 ng-show="subjectsSelected.length>0" style="padding:5px;">Subjects </h4>
 			  <ul class="dropdown-menu ">
 			    <li ng-repeat="subject in subjects"><a ng-click="addSubject(subject)"href="" >{{subject.title}}</a></li>
 			  </ul>
 	 	 </div>
 		 
-	       </div>
+	     
  		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="subject in subjectsSelected">
-				<strong class="text-info" >{{subject.title}}</strong> <span  style="color:red;cursor:pointer" class="badge pull-right" ng-click="removeSubject(subject)">Remove</span>
+				<strong class="text-info" >{{subject.title}}</strong> <span  style="color:red;cursor:pointer;font-size:18px;" class="glyphicon glyphicon-remove text-danger pull-right" ng-click="removeSubject(subject)"></span>
 				</li>
 	          </ul>
+   		</div>
 
+	<div class="form-group well">
+                <form class="form-inline" role="form" style="padding:10px;" name="urlForm">
+			    <div class="form-group">
+			      <strong >Add Link:</strong>
+			    </div>
+			   <div class="form-group" style="padding:3px;"">
+			      <input type="text" ng-model="newLink" 
+				ng-pattern="urlRegex" name="urlInput" ng-minlenght="4" placeholder="http://...">
+				</input>
+			    </div>
+	<span ng-show="urlForm.urlInput.$valid &&  (newLink != '') && (newLink != null)" class="glyphicon glyphicon-ok text-success"></span>
+	<span ng-hide="urlForm.urlInput.$valid || (newLink == '')" class="glyphicon glyphicon-remove text-danger"></span>
+			    <div class="form-group" style="padding:5px;">
+			      <button class="btn btn-info" ng-click="addLink()" >Add</button>
+			    </div> 
+			    
+ 	         </form>
+               
+		<div class="list-group"> 
+			<h4 ng-show="links.length>0">Links </h4>
+			<div   class="list-group-item" ng-repeat="link in links">
+				<a  href="{{formatLink(link)}}" >{{link}} </a>
+				<span ng-click="links.splice(links.indexOf(link), 1)" class="glyphicon glyphicon-remove text-danger pull-right" style="cursor:pointer;font-size:18px;"></span>
+			</div>
+		</div>
+         </div>
 		<button type="submit" class="btn btn-primary" ng-click="addIdea()">Post</button>
 	</div>
 		

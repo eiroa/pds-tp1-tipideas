@@ -268,9 +268,6 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 		});	
 	};
 
-	$scope.validateDir = function(){
-		return auth.getRole() == 'director';
-	}
 
 	$scope.currentUser = auth.currentUser;
 
@@ -374,6 +371,8 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 		}
 	}
 
+     $scope.urlRegex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
+
      $scope.req = function(){
 	ideas.getAll($scope.data.ideasSort.value);
      }
@@ -389,6 +388,7 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 
   $scope.subjects = subjects.subjects;
   $scope.subjectsSelected = [];
+  $scope.links = [];
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.ideas = ideas.ideas;
@@ -397,7 +397,7 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 	{value:'accepted',name:"Accepted ideas for tips"},
 	{value:'pending',name:"Ideas pending approval"},
 	{value:'deleted',name:"Deleted ideas"}
-];
+	];
 
 	$scope.addSubject = function(sub){
 		addSub(sub,$scope.subjectsSelected);
@@ -409,14 +409,28 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 		removeSub(sub,$scope.subjectsSelected);
 	}
 
+	$scope.addLink = function(){
+		if($scope.urlForm.urlInput.$valid && $scope.newLink != null && $scope.newLink != ''){
+			$scope.links.push($scope.newLink);
+			$scope.newLink = '';
+		}
+	}
+        $scope.formatLink = function(link){
+		if(link.substring(0, 3) !="htt"){
+			link = "//"+link;
+		}
+		return link;	
+	}
+
 
 $scope.addIdea = function(){
   if(!$scope.title || $scope.title === '') { return; }
   ideas.create({
 	title: $scope.title, 
-	link: $scope.link,
+	description: $scope.description,
 	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
 	subjects: $scope.subjectsSelected,
+	links: $scope.links,
         user: auth.username
   }).error(function(error,status){
         if(status==403){
@@ -427,7 +441,9 @@ $scope.addIdea = function(){
 });
 
   $scope.title ='';
-  $scope.link ='';
+  $scope.description ='';
+  $scope.links=[];
+  $scope.subjectsSelected = [];
 };
 
 $scope.remove = function(idea){
@@ -556,6 +572,9 @@ function($scope, auth){
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
   $scope.logOut = auth.logOut;
+$scope.validateDir = function(){
+		return auth.getRole() == 'director';
+	}
 }]);
 
 
@@ -574,9 +593,12 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/partials/home.html',
       controller: 'MainCtrl',
       resolve: {
-      	ideaPromise: ['logger', function(logger){
+      	logs: function($stateParams,logger){
       		return logger.getActivities();
-        }]
+        },
+	subs:  function($stateParams,subjects){
+      		return subjects.getAll();
+      	}
       }
   });
 
@@ -649,3 +671,5 @@ $stateProvider.state('subjects', {
 
   $urlRouterProvider.otherwise('home');
 }]);
+
+

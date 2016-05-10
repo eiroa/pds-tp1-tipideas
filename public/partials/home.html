@@ -55,6 +55,11 @@ ng-options="type as type.name for type in types">
 		  <a target="_blank"class="list-group-item" href="{{formatLink(link)}}"  ng-repeat="link in idea.links">{{link}} </a>
 		</div>
 
+		<div class="form-group" ng-show="idea.tags.length>0">
+			<h4 >Tags</h4>
+    <tags-input  ng-model="idea.tags"placeholder="-" on-tag-adding="noTagAdd()"on-tag-removing="noTagRemove()"></tags-input>
+		</div>
+
         <p>
             <strong>Description:</strong> {{idea.description}}
          </p>
@@ -160,6 +165,12 @@ ng-options="type as type.name for type in types">
 			</div>
 		</div>
          </div>
+		
+		<div class="form-group">
+			<h4 >Tags</h4>
+			<tags-input style="height:70px;"ng-model="tags" placeholder="Add your tags here!"></tags-input>
+		</div>
+		
 		<button type="submit" class="btn btn-primary" ng-click="addIdea()">Post</button>
 	</div>
 		

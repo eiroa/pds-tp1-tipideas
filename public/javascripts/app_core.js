@@ -43,11 +43,21 @@ app.factory('auth',['$http','$window',function($http,$window){
                 console.log("executing login");
   		return $http.post('/login', user).success(function(data){
     			auth.saveToken(data.token);
+			auth.saveRole(data.role);
   			});
 	};
 
+	auth.saveRole = function(role){
+		$window.localStorage['userRole'] = role;
+	}
+
 	auth.logOut = function(){
   		$window.localStorage.removeItem('token-tip');
+		$window.localStorage.removeItem('userRole');
+	};
+
+	auth.getRole = function(){
+  		return $window.localStorage['userRole'];
 	};
 
 	return auth;
@@ -257,6 +267,11 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 			$state.go('home');		
 		});	
 	};
+
+	$scope.validateDir = function(){
+		return auth.getRole() == 'director';
+	}
+
 	$scope.currentUser = auth.currentUser;
 
 }]);
@@ -352,11 +367,24 @@ app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,a
 app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','subjects',
 function($scope,ideas,$state,$stateParams,auth,subjects){
    
-
+      	
+	function checkStudent(){
+		if(auth.getRole() == 'student'){
+			$scope.types.splice(2, 2); 
+		}
+	}
 
      $scope.req = function(){
 	ideas.getAll($scope.data.ideasSort.value);
      }
+
+	$scope.validateProfOrDir = function(){
+		return auth.getRole() == 'director' || auth.getRole() == 'professor';
+	}
+		
+	$scope.validateDir = function(){
+		return auth.getRole() == 'director';
+	}
 
 
   $scope.subjects = subjects.subjects;
@@ -456,6 +484,7 @@ $scope.reject = function(idea){
 		};
 
 $scope.currentUser = auth.currentUser;
+checkStudent();
 
 }]);
 
@@ -545,8 +574,8 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/partials/home.html',
       controller: 'MainCtrl',
       resolve: {
-      	ideaPromise: ['ideas','logger', function(ideas){
-      		return ideas.getAll('available');
+      	ideaPromise: ['logger', function(logger){
+      		return logger.getActivities();
         }]
       }
   });

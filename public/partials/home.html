@@ -63,21 +63,21 @@ ng-options="type as type.name for type in types">
  
 
   	<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu">
-	 <li ng-show="data.ideasSort.value == 'pending'">
+	 <li ng-show="data.ideasSort.value == 'pending' && validateDir()">
 			<a class="text-info" href="" ng-click="accept(idea)" style="font-weight:bold;color:green;">Accept idea</a>
         </li>
    	 <li ng-show="data.ideasSort.value == 'available'" >
 		<a class="text-success" href="" ng-click="enroll(idea)" style="font-weight:bold;color:green;">Enroll here</a>
 	</li>
-	<li ng-show="data.ideasSort.value == 'pending'">
+	<li ng-show="data.ideasSort.value == 'pending'  && validateDir()">
 		<a class="text-warning" href="" ng-click="reject(idea)" style="font-weight:bold;color:orange;">Reject idea</a>
 	</li>
-	<li ng-show="data.ideasSort.value == 'available'" role="separator" class="divider"></li>
-   	 <li ng-show="data.ideasSort.value == 'available'" >
+	<li ng-show="data.ideasSort.value == 'available'  && validateDir()" role="separator" class="divider"></li>
+   	 <li ng-show="data.ideasSort.value == 'available'  && validateDir()" >
 		<a class="text-danger "href="#" ng-click="deleteIdea(idea)" style="font-weight:bold;color:red;">Delete idea</a>
-	</li>
+	</li >
    	 <li role="separator" class="divider"></li>
-   	 <li><a class="text-danger "href="#" ng-click="remove(idea)" style="font-weight:bold;color:red;">Destroy idea</a></li>
+   	 <li ng-show =" validateDir()"><a class="text-danger "href="#" ng-click="remove(idea)" style="font-weight:bold;color:red;">Destroy idea</a></li>
   	</ul>
 	</div>
 	
@@ -90,7 +90,7 @@ ng-options="type as type.name for type in types">
     <span>{{ error.message }}</span>
   </div>
 
-      <div ng-show="isLoggedIn()" class="panel panel-primary">
+      <div ng-show="isLoggedIn() && validateProfOrDir()" class="panel panel-primary">
 	<div class="panel-heading"><h3>Propose new idea</h3></div>
 
 	<div class="panel-body" id="formi"

@@ -223,7 +223,7 @@ router.post('/login', function(req, res, next){
     if(err){ return next(err); }
 
     if(user){
-      return res.json({token: user.generateJWT()});
+      return res.json({token: user.generateJWT(),role: user.userRole.title});
     } else {
       return res.status(401).json(info);
     }

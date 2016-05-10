@@ -15,6 +15,7 @@ mongoose.connect('mongodb://localhost/tips');
 
 require('./models/IdeaState');
 require('./models/UserRole');
+require('./models/Subjects');
 require('./models/Logger');
 require('./models/Ideas');
 require('./models/Comments');

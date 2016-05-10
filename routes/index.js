@@ -9,37 +9,35 @@ var User = mongoose.model('User');
 var UserRole = mongoose.model('UserRole');
 var IdeaState = mongoose.model('IdeaState');
 var Logger = mongoose.model('Logger');
+var Subject = mongoose.model('Subject');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 
-function validateProfessor(req,res,next){
-       
-	
-         User.findOne({ username: req.payload.username }).populate('userRole').exec( function (err, user) {
+function validateRole(roles,req,res,next){
+	var result;
+	User.findOne({ username: req.payload.username }).populate('userRole').exec( function (err, user) {
            if (err) { return next(err); }
-		if(user.userRole.title != 'professor' && user.userRole.title != 'director'){
-			res.sendStatus(403);
-                }else{
-			next();
+
+		for (i = 0; i < roles.length; i++) {
+		    if (roles[i] == user.userRole.title){
+			return next();
+		     }
 		}
-      		
+		res.sendStatus(403);
          });
-	  
+}
+
+function validateProfessor(req,res,next){
+	validateRole(['professor','director'],req,res,next);
 }
 
 function validateDirector(req,res,next){
-       
-	
-         User.findOne({ username: req.payload.username }).populate('userRole').exec( function (err, user) {
-           if (err) { return next(err); }
-		if(user.userRole.title != 'director'){
-			res.sendStatus(403);
-                }else{
-			next();
-		}
-      		
-         });
-	  
+	 validateRole(['director'],req,res,next);
+
+}
+
+function validateStudent(req,res,next){
+  	validateRole(['student'],req,res,next);
 }
 
 router.param('idea', function(req, res, next, id) {
@@ -85,12 +83,14 @@ console.log("trying to get ideas with state: "+ req.query.type);
 // Pesimo manejo de collecciones
 
 
+//Dame las ideas, populame el estado, devolve las que coincidan con el estado X, y luego popula las materias
+
 	Idea.find().populate({
 		  path: 'ideaState',
 		  match: {
 		    title: req.query.type
 		  }
-		}).exec(function(err, ideas) {
+		}).populate('subjects').exec(function(err, ideas) {
 		  ideas = ideas.filter(function(idea) {
 		    
 		     return idea.ideaState; // return only ideas with parameter idea state		
@@ -137,16 +137,147 @@ router.get('/ideas/:idea', function(req, res) {
   });
 });
 
+router.get('/subjects', function(req, res, next) {
+// solo dame las materias
+  Subject.find({},function(err, subs){
+    if(err){ 
+	return next(err);
+    }
+	res.json(subs);
+  });
+
+});
 
 
 
+
+//Post Methods
+
+//User methods
+
+router.post('/users/changeRole', auth, validateDirector,function(req, res, next) {
+	
+	User.findById(req.body._id, function(err, user) {
+
+		  if (err) res.send(err);
+
+		    UserRole.findByIdAndRemove(user.userRole, function (err){
+	    		if(err) { return next(err); }
+			console.log("previous role deleted");
+	 	 	});
+
+		    var role = new UserRole();
+	  		role.title = req.body.value;
+	  		user.userRole = role;
+	  		console.log("changing role to "+role.title);
+		   
+		    role.save(function(err) {
+		        if (err) res.send(err);
+		    });
+		    user.save(function(err) {
+		        if (err) res.send(err);
+		    }); 
+		    return res.sendStatus(200);
+
+        });
+
+});
+
+
+router.post('/register', function(req, res, next){
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'});
+  }
+
+  var user = new User();
+  var userRole = new UserRole();
+
+  userRole.title='pending';
+  user.userRole = userRole;
+   
+  
+
+  userRole.save(function(err){ 
+ 	if(err){return next(err);}
+  });
+   
+  console.log("new role saved: " + userRole.title);
+  user.username = req.body.username;
+  user.setPassword(req.body.password);
+
+
+  user.save(function (err){
+    if(err){ return next(err); }
+
+    return res.json({token: user.generateJWT()})
+  });
+});
+
+
+router.post('/login', function(req, res, next){
+ console.log("executing login");
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'});
+  }
+  passport.authenticate('local', function(err, user, info){
+    if(err){ return next(err); }
+
+    if(user){
+      return res.json({token: user.generateJWT(),role: user.userRole.title});
+    } else {
+      return res.status(401).json(info);
+    }
+  })(req, res, next);
+});
+
+
+//subject methods
+
+router.post('/subjects/create', auth, validateDirector, function(req, res, next) {
+  var subject = new Subject();
+  subject.title = req.body.title;
+  subject.description = req.body.description;
+
+  subject.save(function(err, comment){
+    if(err){ return next(err); }
+	res.sendStatus(200);
+  });
+
+});
+
+router.post('/subjects/edit', auth, validateDirector, function(req, res, next) {
+
+  Subject.findById(req.body._id, function(err, subject) {
+
+		  if (err) res.send(err);
+		    subject.title = req.body.title;
+  		    subject.description = req.body.description;
+			
+		    subject.save(function(err) {
+		        if (err) res.send(err);
+		    }); 
+		    return res.sendStatus(200);
+
+        });
+
+});
+
+router.post('/subjects/delete', auth, validateDirector, function(req, res, next) {
+  Subject.findByIdAndRemove(req.body._id, function (err){
+    	if(err) { return next(err); }
+	res.sendStatus(200);
+  });
+	
+});
 
 // idea METHODS //
 
 
 router.post('/ideas', auth, validateProfessor,function(req, res, next) {
-  var idea = new Idea(req.body);
+  var idea = new Idea(req.body); //atencion, la lista de ids de materias viene tambien
   idea.author = req.payload.username;
+
+  console.log("subjects:received "+ idea.subjects);
    
   var ideaState = new IdeaState();
   ideaState.make(function(err){
@@ -194,36 +325,29 @@ router.post('/ideas/:idea/comments', auth, function(req, res, next) {
 
 });
 
-router.post('/users/changeRole', auth, function(req, res, next) {
-	
-	User.findById(req.body._id, function(err, user) {
+router.post('/ideas/:idea/comments', auth, function(req, res, next) {
+  var comment = new Comment(req.body);
+  comment.idea = req.idea;
+  comment.author = req.payload.username;
 
-		  if (err) res.send(err);
+  comment.save(function(err, comment){
+    if(err){ return next(err); }
 
-		    UserRole.findByIdAndRemove(user.userRole, function (err){
-	    		if(err) { return next(err); }
-			console.log("previous role deleted");
-	 	 	});
+    req.idea.comments.push(comment);
+    	req.idea.save(function(err, idea) {
+      		if(err){ return next(err); }
 
-		    var role = new UserRole();
-	  		role.title = req.body.value;
-	  		user.userRole = role;
-	  		console.log("changing role to "+role.title);
-		   
-		    role.save(function(err) {
-		        if (err) res.send(err);
-		    });
-		    // 
-		    user.save(function(err) {
-		        if (err) res.send(err);
-		    }); 
-		    return res.sendStatus(200);
-
-        });
+      		res.json(comment);
+    	});
+  });
 
 });
 
-router.post('/ideas/enroll/:idea', function(req, res, next) {
+
+
+
+
+router.post('/ideas/enroll/:idea', validateStudent, function(req, res, next) {
        console.log("enrolling idea-> "+req.idea.author+ " " + req.idea.title);
 
          Idea.findById(req.idea._id, function(err, idea) {
@@ -263,7 +387,7 @@ router.post('/ideas/enroll/:idea', function(req, res, next) {
 });
 
 
-router.post('/ideas/reject/:idea', function(req, res, next) {
+router.post('/ideas/reject/:idea', validateDirector, function(req, res, next) {
 	Idea.findById(req.idea._id, function(err, idea) {
 
             if (err) res.send(err);
@@ -301,7 +425,7 @@ router.post('/ideas/reject/:idea', function(req, res, next) {
 	res.sendStatus(200);
 });
 
-router.post('/ideas/delete/:idea', function(req, res, next) {
+router.post('/ideas/delete/:idea', validateDirector,function(req, res, next) {
 
          Idea.findById(req.idea._id, function(err, idea) {
 
@@ -339,7 +463,7 @@ router.post('/ideas/delete/:idea', function(req, res, next) {
 	res.sendStatus(200);
 });
 
-router.post('/ideas/accept/:idea', function(req, res, next) {
+router.post('/ideas/accept/:idea', validateDirector,function(req, res, next) {
 	
 	
   	Idea.findById(req.idea._id, function(err, idea) {
@@ -397,51 +521,7 @@ router.post('/ideas/remove/:idea',auth, validateDirector,function(req, res, next
 });
 
 
-router.post('/register', function(req, res, next){
-  if(!req.body.username || !req.body.password){
-    return res.status(400).json({message: 'Please fill out all fields'});
-  }
 
-  var user = new User();
-  var userRole = new UserRole();
-
-  userRole.title='pending';
-  user.userRole = userRole;
-   
-  
-
-  userRole.save(function(err){ 
- 	if(err){return next(err);}
-  });
-   
-  console.log("new role saved: " + userRole.title);
-  user.username = req.body.username;
-  user.setPassword(req.body.password);
-
-
-  user.save(function (err){
-    if(err){ return next(err); }
-
-    return res.json({token: user.generateJWT()})
-  });
-});
-
-
-router.post('/login', function(req, res, next){
- console.log("executing login");
-  if(!req.body.username || !req.body.password){
-    return res.status(400).json({message: 'Please fill out all fields'});
-  }
-  passport.authenticate('local', function(err, user, info){
-    if(err){ return next(err); }
-
-    if(user){
-      return res.json({token: user.generateJWT()});
-    } else {
-      return res.status(401).json(info);
-    }
-  })(req, res, next);
-});
 
 
 

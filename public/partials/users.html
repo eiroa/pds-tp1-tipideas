@@ -6,7 +6,9 @@
     </h3>
     
 </div>
-
+<div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
  
   <div ng-show="isLoggedIn()" ng-repeat="user in users " class="well">
        
@@ -26,15 +28,15 @@
     </strong>
 
    <div class="dropdown text-right">
-  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Select a Role
-    <span class="caret"></span>
-  </button>
- 
-  <ul class="dropdown-menu pull-right">
-    <li ng-repeat="role in roles"><a href="" ng-click="changeRole(user,role)">{{role.name}}</a></li>
-  </ul>
-</div>
+	  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	    Select a Role
+	    <span class="caret"></span>
+	  </button>
+	 
+	  <ul class="dropdown-menu pull-right">
+	    <li ng-repeat="role in roles"><a href="" ng-click="changeRole(user,role)">{{role.name}}</a></li>
+	  </ul>
+  </div>
      
   </div>
 

@@ -10,7 +10,10 @@
  <script src="/javascripts/ui-router.js"></script>
  <script src="/javascripts/moment.js"></script>
  <script src="/javascripts/angular-moment.js"></script>
+ <script src="/javascripts/ng-tags-input.min.js"></script>
  <link  href="/stylesheets/bootstrap-select.min.css" rel="stylesheet">
+ <link  href="/stylesheets/ng-tags-input.bootstrap.min.css" rel="stylesheet">
+ <link  href="/stylesheets/ng-tags-input.min.css" rel="stylesheet">
 
  <script src="/javascripts/bootstrap-select.min.js"></script>
   <!-- inject:js   -->
@@ -75,12 +78,13 @@
 
 	<div class="dropdown text-center">
 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-	    Future Actions
+	    Actions
 	    <span class="caret"></span>
 	  </button>
 	 
 	  <ul class="dropdown-menu">
-	    <li><a href="/#/users">User administration</a></li>
+	    <li ng-show =" validateDir()"><a href="/#/users">User administration</a></li>
+	     <li ng-show =" validateDir()"><a href="/#/subjects">Subjects administration</a></li>
 	  </ul>
 	</div>
 

@@ -43,11 +43,21 @@ app.factory('auth',['$http','$window',function($http,$window){
                 console.log("executing login");
   		return $http.post('/login', user).success(function(data){
     			auth.saveToken(data.token);
+			auth.saveRole(data.role);
   			});
 	};
 
+	auth.saveRole = function(role){
+		$window.localStorage['userRole'] = role;
+	}
+
 	auth.logOut = function(){
   		$window.localStorage.removeItem('token-tip');
+		$window.localStorage.removeItem('userRole');
+	};
+
+	auth.getRole = function(){
+  		return $window.localStorage['userRole'];
 	};
 
 	return auth;
@@ -69,7 +79,7 @@ app.factory('logger',['$http', 'auth',function($http,auth){
 	return service;
 }]);
 
-app.factory('ideas',['$http', 'auth','logger',function($http,auth,logger){
+app.factory('ideas',['$http', 'auth','logger','subjects',function($http,auth,logger,subjects){
 	var service = {
 		ideas:[]
 	};
@@ -102,6 +112,8 @@ app.factory('ideas',['$http', 'auth','logger',function($http,auth,logger){
       			angular.copy(data, service.ideas);
 			console.log('ideas loaded');
 			logger.getActivities();
+			subjects.getAll();
+			
     		  });
   	};
 
@@ -198,6 +210,44 @@ app.factory('users',['$http', 'auth',function($http,auth){
 	return service;
 }]);
 
+app.factory('subjects',['$http', 'auth',function($http,auth){
+	var service = {
+		subjects:[]
+	};
+	
+	service.getAll = function(){
+		return $http.get('/subjects').success(function(data){
+      			angular.copy(data, service.subjects);
+			console.log('subjects loaded');
+    		});
+        };
+
+	service.create = function(subject){
+		return $http.post('/subjects/create',subject,{
+		   headers : {Authorization: 'Bearer '+auth.getToken()}			
+		}).success(function(data){
+			service.getAll();
+		});
+	};
+
+	service.edit = function(subject){
+		return $http.post('/subjects/edit',subject,{
+		   headers : {Authorization: 'Bearer '+auth.getToken()}			
+		}).success(function(data){
+			service.getAll();
+		});
+	};
+
+	service.removeSubject = function(subject){
+		return $http.post('/subjects/delete',{_id:subject._id},{
+		   headers : {Authorization: 'Bearer '+auth.getToken()}			
+		});
+	};
+
+
+	return service;
+}]);
+
 
 
 app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth){
@@ -217,25 +267,128 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 			$state.go('home');		
 		});	
 	};
+
+	$scope.validateDir = function(){
+		return auth.getRole() == 'director';
+	}
+
 	$scope.currentUser = auth.currentUser;
+
+}]);
+
+app.controller('SubjectCtrl',['$scope','$state','auth','subjects', function($scope,$state,auth,subjects){
+	$scope.currentUser = auth.currentUser;
+	$scope.isLoggedIn = auth.isLoggedIn;
+	$scope.subjects = subjects.subjects;
+	
+	$scope.addSubject = function(){
+	  if(!$scope.title || $scope.title === '') { return; }
+		  subjects.create({
+			title: $scope.title, 
+			description: $scope.description
+		  }).error(function(error,status){
+			if(status==403){
+				$scope.error = {message:""};
+				$scope.error.message = "Your user is not authorized for this action";
+			}
+		
+		});
+
+	  $scope.title ='';
+	  $scope.description ='';
+	};
+
+	$scope.remove = function(sub){
+		subjects.removeSubject(sub).success(function(data){
+				console.log("materia borrada");
+	                $state.reload();
+        		removeSubject(sub);
+		
+		}).error(function(error,status){
+			if(status==403){
+				$scope.error = {message:""};
+				$scope.error.message = "Your user is not authorized for this action";
+			};
+		});
+      }
+
+	$scope.edit = function(sub){
+		$scope.editing = true;
+		$scope.toEdit = sub;
+		$scope.title = sub.title;
+	 	$scope.description = sub.description;
+		
+	}
+
+	$scope.editSubject = function(){
+	  if(!$scope.title || $scope.title === '') { return; }
+		  subjects.edit({
+                        _id: $scope.toEdit._id,
+			title: $scope.title, 
+			description: $scope.description
+		  }).error(function(error,status){
+			if(status==403){
+				$scope.error = {message:""};
+				$scope.error.message = "Your user is not authorized for this action";
+			}
+		
+		});
+
+	  $scope.title ='';
+	  $scope.description ='';
+	  $scope.editing = false;
+	  $scope.toEdit = null;
+	}
+
+	$scope.cancelEdit = function(){
+		$scope.editing = false;
+	  	$scope.toEdit = null;
+		$scope.title ='';
+	 	 $scope.description ='';
+	}
+	
+
+	function removeSubject(sub){
+		var index = subjects.subjects.indexOf(idea);
+	  	subjects.subjects.splice(index, 1); 
+	} 
+
+
+	
 
 }]);
 
 app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,auth){
 	$scope.activities = logger.activities;
 	$scope.isLoggedIn = auth.isLoggedIn;
+	
 }]);
 
-app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth',
-function($scope,ideas,$state,$stateParams,auth){
+app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','subjects',
+function($scope,ideas,$state,$stateParams,auth,subjects){
    
-
+      	
+	function checkStudent(){
+		if(auth.getRole() == 'student'){
+			$scope.types.splice(2, 2); 
+		}
+	}
 
      $scope.req = function(){
 	ideas.getAll($scope.data.ideasSort.value);
      }
 
+	$scope.validateProfOrDir = function(){
+		return auth.getRole() == 'director' || auth.getRole() == 'professor';
+	}
+		
+	$scope.validateDir = function(){
+		return auth.getRole() == 'director';
+	}
 
+
+  $scope.subjects = subjects.subjects;
+  $scope.subjectsSelected = [];
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.ideas = ideas.ideas;
@@ -246,6 +399,16 @@ function($scope,ideas,$state,$stateParams,auth){
 	{value:'deleted',name:"Deleted ideas"}
 ];
 
+	$scope.addSubject = function(sub){
+		addSub(sub,$scope.subjectsSelected);
+		removeSub(sub,subjects.subjects);
+	}
+
+	$scope.removeSubject = function(sub){
+		addSub(sub,subjects.subjects);
+		removeSub(sub,$scope.subjectsSelected);
+	}
+
 
 $scope.addIdea = function(){
   if(!$scope.title || $scope.title === '') { return; }
@@ -253,7 +416,8 @@ $scope.addIdea = function(){
 	title: $scope.title, 
 	link: $scope.link,
 	date: Date.now(),  //le mandamos la fecha de una, atenti que aca estariamos usamos la fecha que reporta el cliente sin upvotes, ya que se definio que mongo lo crea en 0 por default
-       user: auth.username
+	subjects: $scope.subjectsSelected,
+        user: auth.username
   }).error(function(error,status){
         if(status==403){
 		$scope.error = {message:""};
@@ -261,8 +425,6 @@ $scope.addIdea = function(){
 	}
 		
 });
- 
-	
 
   $scope.title ='';
   $scope.link ='';
@@ -290,6 +452,15 @@ function removeIdea(idea){
   			ideas.ideas.splice(index, 1); 
 } 
 
+function removeSub(sub,col){
+	var index = col.indexOf(sub);
+  			col.splice(index, 1); 
+}
+
+function addSub(sub,col){
+  	col.push(sub); 
+}
+
 $scope.accept = function(idea){
 		ideas.accept(idea);
 		 removeIdea(idea);
@@ -313,6 +484,7 @@ $scope.reject = function(idea){
 		};
 
 $scope.currentUser = auth.currentUser;
+checkStudent();
 
 }]);
 
@@ -402,8 +574,8 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/partials/home.html',
       controller: 'MainCtrl',
       resolve: {
-      	ideaPromise: ['ideas','logger', function(ideas){
-      		return ideas.getAll('available');
+      	ideaPromise: ['logger', function(logger){
+      		return logger.getActivities();
         }]
       }
   });
@@ -457,7 +629,23 @@ $stateProvider.state('users', {
           return users.getAll();
     	}]
    }
-});		
+});	
+
+$stateProvider.state('subjects', {
+  url: '/subjects',
+  templateUrl: '/partials/subjects.html',
+  controller: 'SubjectCtrl',
+  onEnter: ['$state', 'auth', function($state, auth){
+    if(!auth.isLoggedIn()){
+      $state.go('home');
+    }
+  }],
+    resolve: {
+    	subsPromise: ['$stateParams', 'subjects', function($stateParams, subjects) {
+          return subjects.getAll();
+    	}]
+   }
+});	
 
   $urlRouterProvider.otherwise('home');
 }]);

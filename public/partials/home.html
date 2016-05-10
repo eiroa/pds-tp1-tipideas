@@ -57,11 +57,15 @@ ng-options="type as type.name for type in types">
 
 		<div class="form-group" ng-show="idea.tags.length>0">
 			<h4 >Tags</h4>
-    <tags-input  ng-model="idea.tags"placeholder="-" on-tag-adding="noTagAdd()"on-tag-removing="noTagRemove()"></tags-input>
+			    <tags-input  ng-model="idea.tags"
+					placeholder="-" 
+					on-tag-adding="noTagAdd()"
+					on-tag-removing="noTagRemove()">
+			  </tags-input>
 		</div>
 
         <p>
-            <strong>Description:</strong> {{idea.description}}
+            <strong >Description</strong> {{idea.description}}
          </p>
 
 

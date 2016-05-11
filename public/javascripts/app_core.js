@@ -393,7 +393,9 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 
   $scope.subjects = subjects.subjects;
   $scope.subjectsSelected = [];
+  
   $scope.links = [];
+  $scope.tags = [];
   $scope.newTags = [];
   $scope.isLoggedIn = auth.isLoggedIn;
 
@@ -416,7 +418,8 @@ function($scope,ideas,$state,$stateParams,auth,subjects){
 	}
 
 	$scope.addLink = function(){
-		if($scope.urlForm.urlInput.$valid && $scope.newLink != null && $scope.newLink != ''){
+		console.log($scope.newLink)
+		if($scope.urlForm.urlInput.$valid && $scope.newLink!= null && $scope.newLink != ''){
 			$scope.links.push($scope.newLink);
 			$scope.newLink = '';
 		}
@@ -458,6 +461,7 @@ $scope.addIdea = function(){
   $scope.links=[];
   $scope.subjectsSelected = [];
   $scope.newTags = [];
+  $scope.tags = [];
 };
 
 $scope.remove = function(idea){

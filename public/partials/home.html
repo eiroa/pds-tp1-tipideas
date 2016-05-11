@@ -17,7 +17,7 @@ ng-options="type as type.name for type in types">
   <h2 ng-show="ideasSort=='pending'">Ideas pending approval</h2>
   <h2 ng-show="ideasSort=='accepted'">Accepted ideas</h2>
   <h2 ng-show="ideasSort=='deleted'">Ideas deleted</h2>
-   <div ng-show="isLoggedIn()" class="well" ng-repeat="idea in ideas | orderBy: sortValue">
+   <div ng-show="isLoggedIn()" class="well ideasShown" ng-repeat="idea in ideas | orderBy: sortValue">
         <span class="glyphicon glyphicon-thumbs-up"
 		style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
           ng-click="addVote(idea)"></span>
@@ -104,7 +104,7 @@ ng-options="type as type.name for type in types">
     <span>{{ error.message }}</span>
   </div>
 
-      <div ng-show="isLoggedIn() && validateProfOrDir()" class="panel panel-primary">
+      <div ng-show="isLoggedIn() && validateProfOrDir()" class="panel panel-primary" id="panelNewIdea">
 	<div class="panel-heading"><h3>Propose new idea</h3></div>
 
 	<div class="panel-body" id="formi"
@@ -125,13 +125,13 @@ ng-options="type as type.name for type in types">
 		
               <div class="form-group well">
 	   	<div class="dropdown ">
-	           <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	           <button id="selectSubject" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			    Select subjects
 			    <span class="caret"></span>
                   </button>
 			 <h4 ng-show="subjectsSelected.length>0" style="padding:5px;">Subjects </h4>
 			  <ul class="dropdown-menu ">
-			    <li ng-repeat="subject in subjects"><a ng-click="addSubject(subject)"href="" >{{subject.title}}</a></li>
+			    <li ng-repeat="subject in subjects"><a ng-click="addSubject(subject)" href="" >{{subject.title}}</a></li>
 			  </ul>
 	 	 </div>
 		 
@@ -156,7 +156,7 @@ ng-options="type as type.name for type in types">
 	<span ng-show="urlForm.urlInput.$valid &&  (newLink != '') && (newLink != null)" class="glyphicon glyphicon-ok text-success"></span>
 	<span ng-hide="urlForm.urlInput.$valid || (newLink == '')" class="glyphicon glyphicon-remove text-danger"></span>
 			    <div class="form-group" style="padding:5px;">
-			      <button class="btn btn-info" ng-click="addLink()" >Add</button>
+			      <button id="addLink" class="btn btn-info" ng-click="addLink()" >Add</button>
 			    </div> 
 			    
  	         </form>
@@ -172,10 +172,10 @@ ng-options="type as type.name for type in types">
 		
 		<div class="form-group">
 			<h4 >Tags</h4>
-			<tags-input style="height:70px;"ng-model="tags" placeholder="Add your tags here!"></tags-input>
+			<tags-input id="tags" style="height:70px;"ng-model="tags" placeholder="Add your tags here!"></tags-input>
 		</div>
 		
-		<button type="submit" class="btn btn-primary" ng-click="addIdea()">Post</button>
+		<button id="saveIdea" type="submit" class="btn btn-primary" ng-click="addIdea()">Post</button>
 	</div>
 		
       </div>

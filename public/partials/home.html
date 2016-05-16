@@ -1,184 +1,187 @@
-<div class="page-header text-center">
-        <h1>TP1 - TIPS</h1>
-      </div>
-		
+		<div class="page-header text-center">
+		        <h1>TP1 - TIPS</h1>
+		      </div>
+				
 
-<div ng-show="isLoggedIn()">
+		<div ng-show="isLoggedIn()">
 
-<select class="form-control" ng-model="data.ideasSort"  ng-change="req()" style="margin-bottom:10px;"
-ng-options="type as type.name for type in types">
-            <option value="">Select a group</option>
-  </select>
+		<select class="form-control" ng-model="data.ideasSort"  ng-change="req()" style="margin-bottom:10px;"
+		ng-options="type as type.name for type in types">
+		            <option value="">Select a group</option>
+		  </select>
 
 
-</div>
-
-  <h2 ng-show="ideasSort=='available'">Available Ideas</h2>
-  <h2 ng-show="ideasSort=='pending'">Ideas pending approval</h2>
-  <h2 ng-show="ideasSort=='accepted'">Accepted ideas</h2>
-  <h2 ng-show="ideasSort=='deleted'">Ideas deleted</h2>
-   <div ng-show="isLoggedIn()" class="well ideasShown" ng-repeat="idea in ideas | orderBy: sortValue">
-        <span class="glyphicon glyphicon-thumbs-up"
-		style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
-          ng-click="addVote(idea)"></span>
-        {{idea.upvotes}}
-	<span>
-	<span class="glyphicon glyphicon-thumbs-down"
-		style="color:red;cursor:pointer;font-size:18px; margin-left:15px;"
-          ng-click="downVote(idea)"></span>
-        {{idea.downvotes}}
-	<span>
-        <span style="font-size:20px; margin-left:10px;">
-          <span >
-            {{idea.title}}
-          </span>
-          
-        </span>
-	<span am-time-ago="idea.date"></span>
-        <span ng-show="idea.author">posted by - {{idea.author}}</span>
-
-  		<a  style="margin-left:10px;"href="#/ideas/{{idea._id}}"> Comments </a>
-	</span>
-	<br/>
-
-			 <form class="form-inline" role="form" style="padding:10px;">
-			    <div class="form-group">
-			      <strong >Subjects associated:</strong>
-			    </div>
-			    <div class="form-group" style="padding:3px;"ng-repeat="subject in idea.subjects">
-			      <span class="badge" >{{subject.title}}</strong>
-			    </div>
- 			 </form>
-
-		<div class="list-group"> 
-		  <h4 ng-show="(idea.links).length>0">Links </h4>
-		  <a target="_blank"class="list-group-item" href="{{formatLink(link)}}"  ng-repeat="link in idea.links">{{link}} </a>
 		</div>
 
-		<div class="form-group" ng-show="idea.tags.length>0">
-			<h4 >Tags</h4>
-			    <tags-input  ng-model="idea.tags"
-					placeholder="-" 
-					on-tag-adding="noTagAdd()"
-					on-tag-removing="noTagRemove()">
-			  </tags-input>
-		</div>
+		  <h2 ng-show="ideasSort=='available'">Available Ideas</h2>
+		  <h2 ng-show="ideasSort=='pending'">Ideas pending approval</h2>
+		  <h2 ng-show="ideasSort=='accepted'">Accepted ideas</h2>
+		  <h2 ng-show="ideasSort=='deleted'">Ideas deleted</h2>
+		   <div ng-show="isLoggedIn()" class="well ideasShown" ng-repeat="idea in ideas | orderBy: sortValue">
+		        
+			<!-- 
+			<span class="glyphicon glyphicon-thumbs-up"
+				style="color:green;cursor:pointer;font-size:18px; margin-left:15px;"
+		          ng-click="addVote(idea)"></span>
+		        {{idea.upvotes}} 
+		        <span class="glyphicon glyphicon-thumbs-down"
+				style="color:red;cursor:pointer;font-size:18px; margin-left:15px;"
+		          ng-click="downVote(idea)"></span>
+		        {{idea.downvotes}} 
+		        -->
+			<span>
+		        <span style="font-size:20px; ">
+		          <span >
+		            {{idea.title}}
+		          </span>
+		          
+		        </span>
+			<span am-time-ago="idea.date"></span>
+		        <span ng-show="idea.author">created by - {{idea.author}}</span>
 
-        <p>
-            <strong >Description</strong> {{idea.description}}
-         </p>
+		  		<a  class="pull-right" href="#/ideas/{{idea._id}}"> Comments </a>
+			</span>
+			<br/>
+			<br/>
+
+					 <form class="form-inline" role="form" >
+					    <div class="form-group">
+					      <strong >Subjects associated:</strong>
+					    </div>
+					    <div class="form-group" style="padding:5px;"ng-repeat="subject in idea.subjects">
+					      <span class="badge" >{{subject.title}}</strong>
+					    </div>
+		 			 </form>
+
+				<div class="list-group"> 
+				  <h4 ng-show="(idea.links).length>0">Links </h4>
+				  <a target="_blank"class="list-group-item" href="{{formatLink(link)}}"  ng-repeat="link in idea.links">{{link}} </a>
+				</div>
+
+				<div class="form-group" ng-show="idea.tags.length>0">
+					<h4 >Tags</h4>
+					    <tags-input  ng-model="idea.tags"
+							placeholder="-" 
+							on-tag-adding="noTagAdd()"
+							on-tag-removing="noTagRemove()">
+					  </tags-input>
+				</div>
+
+		        <p>
+		            <strong >Description</strong> {{idea.description}}
+		         </p>
 
 
-	<div class="dropdown text-right">
-  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    	Choose an action
-    	<span class="caret"></span>
-  	</button>
- 
-
-  	<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu">
-	 <li ng-show="data.ideasSort.value == 'pending' && validateDir()">
-			<a class="text-info" href="" ng-click="accept(idea)" style="font-weight:bold;color:green;">Accept idea</a>
-        </li>
-   	 <li ng-show="data.ideasSort.value == 'available'" >
-		<a class="text-success" href="" ng-click="enroll(idea)" style="font-weight:bold;color:green;">Enroll here</a>
-	</li>
-	<li ng-show="data.ideasSort.value == 'pending'  && validateDir()">
-		<a class="text-warning" href="" ng-click="reject(idea)" style="font-weight:bold;color:orange;">Reject idea</a>
-	</li>
-	<li ng-show="data.ideasSort.value == 'available'  && validateDir()" role="separator" class="divider"></li>
-   	 <li ng-show="data.ideasSort.value == 'available'  && validateDir()" >
-		<a class="text-danger "href="#" ng-click="deleteIdea(idea)" style="font-weight:bold;color:red;">Delete idea</a>
-	</li >
-   	 <li role="separator" class="divider"></li>
-   	 <li ng-show =" validateDir()"><a class="text-danger "href="#" ng-click="remove(idea)" style="font-weight:bold;color:red;">Destroy idea</a></li>
-  	</ul>
-	</div>
-	
-      </div>
-	<div ng-hide="isLoggedIn()">
-  <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can propose a new idea.</h3>
-</div>
-
-<div ng-show="error" class="alert alert-danger row">
-    <span>{{ error.message }}</span>
-  </div>
-
-      <div ng-show="isLoggedIn() && validateProfOrDir()" class="panel panel-primary" id="panelNewIdea">
-	<div class="panel-heading"><h3>Propose new idea</h3></div>
-
-	<div class="panel-body" id="formi"
-                
-		style="margin-top:30px;">
-		
-
-		<div class="form-group">
-		  <input type="text"
-		    class="form-control"
-		    placeholder="Title"
-		    ng-model="title" required></input>
-		</div>
-		<div class="form-group">
-			<textarea form ="formi" class="form-control" ng-model="description"  cols="35" wrap="soft" placeholder="Description"></textarea>
+			<div class="dropdown text-right">
+		  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+		    	Choose an action
+		    	<span class="caret"></span>
+		  	</button>
 		 
-		</div>
-		
-              <div class="form-group well">
-	   	<div class="dropdown ">
-	           <button id="selectSubject" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-			    Select subjects
-			    <span class="caret"></span>
-                  </button>
-			 <h4 ng-show="subjectsSelected.length>0" style="padding:5px;">Subjects </h4>
-			  <ul class="dropdown-menu ">
-			    <li ng-repeat="subject in subjects"><a ng-click="addSubject(subject)" href="" >{{subject.title}}</a></li>
-			  </ul>
-	 	 </div>
-		 
-	     
- 		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="subject in subjectsSelected">
-				<strong class="text-info" >{{subject.title}}</strong> <span  style="color:red;cursor:pointer;font-size:18px;" class="glyphicon glyphicon-remove text-danger pull-right" ng-click="removeSubject(subject)"></span>
-				</li>
-	          </ul>
-   		</div>
 
-	<div class="form-group well">
-                <form class="form-inline" role="form" style="padding:10px;" name="urlForm">
-			    <div class="form-group">
-			      <strong >Add Link:</strong>
-			    </div>
-			   <div class="form-group" style="padding:3px;"">
-			      <input type="text" ng-model="newLink" 
-				ng-pattern="urlRegex" name="urlInput" ng-minlenght="4" placeholder="http://...">
-				</input>
-			    </div>
-	<span ng-show="urlForm.urlInput.$valid &&  (newLink != '') && (newLink != null)" class="glyphicon glyphicon-ok text-success"></span>
-	<span ng-hide="urlForm.urlInput.$valid || (newLink == '')" class="glyphicon glyphicon-remove text-danger"></span>
-			    <div class="form-group" style="padding:5px;">
-			      <button id="addLink" class="btn btn-info" ng-click="addLink()" >Add</button>
-			    </div> 
-			    
- 	         </form>
-               
-		<div class="list-group"> 
-			<h4 ng-show="links.length>0">Links </h4>
-			<div   class="list-group-item" ng-repeat="link in links">
-				<a  href="{{formatLink(link)}}" >{{link}} </a>
-				<span ng-click="links.splice(links.indexOf(link), 1)" class="glyphicon glyphicon-remove text-danger pull-right" style="cursor:pointer;font-size:18px;"></span>
+		  	<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu">
+			 <li ng-show="data.ideasSort.value == 'pending' && validateDir()">
+					<a id="acceptIdea" class="text-info" href="" ng-click="accept(idea)" style="font-weight:bold;color:green;">Accept idea</a>
+		        </li>
+		   	 <li ng-show="data.ideasSort.value == 'available'" >
+				<a id="enrollIdea" class="text-success" href="" ng-click="enroll(idea)" style="font-weight:bold;color:green;">Enroll here</a>
+			</li>
+			<li ng-show="data.ideasSort.value == 'pending'  && validateDir()">
+				<a id="rejectIdea" class="text-warning" href="" ng-click="reject(idea)" style="font-weight:bold;color:orange;">Reject idea</a>
+			</li>
+			<li ng-show="data.ideasSort.value == 'available'  && validateDir()" role="separator" class="divider"></li>
+		   	 <li ng-show="data.ideasSort.value == 'available'  && validateDir()" >
+				<a id="deleteIdea" class="text-danger "href="#" ng-click="deleteIdea(idea)" style="font-weight:bold;color:red;">Delete idea</a>
+			</li >
+		   	 <li role="separator" class="divider"></li>
+		   	 <li ng-show =" validateDir()"><a id="destroyIdea" class="text-danger "href="#" ng-click="remove(idea)" style="font-weight:bold;color:red;">Destroy idea</a></li>
+		  	</ul>
 			</div>
+			
+		      </div>
+			<div ng-hide="isLoggedIn()">
+		  <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can propose a new idea.</h3>
 		</div>
-         </div>
-		
-		<div class="form-group">
-			<h4 >Tags</h4>
-			<tags-input id="tags" style="height:70px;"ng-model="tags" placeholder="Add your tags here!"></tags-input>
-		</div>
-		
-		<button id="saveIdea" type="submit" class="btn btn-primary" ng-click="addIdea()">Post</button>
-	</div>
-		
-      </div>
 
-<div class="dropup">
+		<div ng-show="error" class="alert alert-danger row">
+		    <span>{{ error.message }}</span>
+		  </div>
+
+		      <div ng-show="isLoggedIn() && validateProfOrDir()" class="panel panel-primary" id="panelNewIdea">
+			<div class="panel-heading"><h3>Propose new idea</h3></div>
+
+			<div class="panel-body" id="formi"
+		                
+				style="margin-top:30px;">
+				
+
+				<div class="form-group">
+				  <input type="text"
+				    class="form-control"
+				    placeholder="Title"
+				    ng-model="title" required></input>
+				</div>
+				<div class="form-group">
+					<textarea form ="formi" class="form-control" ng-model="description"  cols="35" wrap="soft" placeholder="Description"></textarea>
+				 
+				</div>
+				
+		              <div class="form-group well">
+			   	<div class="dropdown ">
+			           <button id="selectSubject" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Select subjects
+					    <span class="caret"></span>
+		                  </button>
+					 <h4 ng-show="subjectsSelected.length>0" style="padding:5px;">Subjects </h4>
+					  <ul class="dropdown-menu ">
+					    <li ng-repeat="subject in subjects"><a ng-click="addSubject(subject)" href="" >{{subject.title}}</a></li>
+					  </ul>
+			 	 </div>
+				 
+			     
+		 		<ul class="list-group">
+					<li class="list-group-item" ng-repeat="subject in subjectsSelected">
+						<strong class="text-info" >{{subject.title}}</strong> <span  style="color:red;cursor:pointer;font-size:18px;" class="glyphicon glyphicon-remove text-danger pull-right" ng-click="removeSubject(subject)"></span>
+						</li>
+			          </ul>
+		   		</div>
+
+			<div class="form-group well">
+		                <form class="form-inline" role="form" style="padding:10px;" name="urlForm">
+					    <div class="form-group">
+					      <strong >Add Link:</strong>
+					    </div>
+					   <div class="form-group" style="padding:3px;"">
+					      <input type="text" ng-model="newLink" 
+						ng-pattern="urlRegex" name="urlInput" ng-minlenght="4" placeholder="http://...">
+						</input>
+					    </div>
+			<span ng-show="urlForm.urlInput.$valid &&  (newLink != '') && (newLink != null)" class="glyphicon glyphicon-ok text-success"></span>
+			<span ng-hide="urlForm.urlInput.$valid || (newLink == '')" class="glyphicon glyphicon-remove text-danger"></span>
+					    <div class="form-group" style="padding:5px;">
+					      <button id="addLink" class="btn btn-info" ng-click="addLink()" >Add</button>
+					    </div> 
+					    
+		 	         </form>
+		               
+				<div class="list-group"> 
+					<h4 ng-show="links.length>0">Links </h4>
+					<div   class="list-group-item" ng-repeat="link in links">
+						<a  href="{{formatLink(link)}}" >{{link}} </a>
+						<span ng-click="links.splice(links.indexOf(link), 1)" class="glyphicon glyphicon-remove text-danger pull-right" style="cursor:pointer;font-size:18px;"></span>
+					</div>
+				</div>
+		         </div>
+				
+				<div class="form-group">
+					<h4 >Tags</h4>
+					<tags-input id="tags" style="height:70px;"ng-model="tags" placeholder="Add your tags here!"></tags-input>
+				</div>
+				
+				<button id="saveIdea" type="submit" class="btn btn-primary" ng-click="addIdea()">Post</button>
+			</div>
+				
+		      </div>
+
+		<div class="dropup">
 

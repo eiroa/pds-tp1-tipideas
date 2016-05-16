@@ -120,8 +120,6 @@ app.factory('ideas',['$http', 'auth','logger','subjects',function($http,auth,log
 	service.create = function(idea){
 		return $http.post('/ideas',idea,{
 		   headers : {Authorization: 'Bearer '+auth.getToken()}			
-		}).success(function(data){
-			service.ideas.push(data);
 		});
 	};
 	
@@ -273,7 +271,7 @@ app.controller('AuthCtrl',['$scope','$state','auth', function($scope,$state,auth
 
 }]);
 
-app.controller('SubjectCtrl',['$scope','$state','auth','subjects', function($scope,$state,auth,subjects){
+app.controller('SubjectCtrl',['$scope','$state','auth','subjects','logger', function($scope,$state,auth,subjects,logger){
 	$scope.currentUser = auth.currentUser;
 	$scope.isLoggedIn = auth.isLoggedIn;
 	$scope.subjects = subjects.subjects;
@@ -361,8 +359,8 @@ app.controller('ActivityCtrl',['$scope','logger','auth',function($scope,logger,a
 	
 }]);
 
-app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','subjects',
-function($scope,ideas,$state,$stateParams,auth,subjects){
+app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','subjects','logger',
+function($scope,ideas,$state,$stateParams,auth,subjects,logger){
    
       	
 	function checkStudent(){
@@ -439,7 +437,7 @@ $scope.addIdea = function(){
 	for (i = 0; i < ($scope.tags).length; i++) {
 			$scope.newTags.push(($scope.tags)[i].text);
 		}
-
+  $scope.copySubjectsSelected = $scope.subjectsSelected.slice();
   ideas.create({
 	title: $scope.title, 
 	description: $scope.description,
@@ -447,8 +445,13 @@ $scope.addIdea = function(){
 	subjects: $scope.subjectsSelected,
 	links: $scope.links,
 	tags: $scope.newTags,
-        user: auth.username
-  }).error(function(error,status){
+    user: auth.username
+  }).success(function(data){
+  			data.subjects = $scope.copySubjectsSelected;
+			ideas.ideas.push(data);
+			$scope.copySubjectsSelected = [];
+			logger.getActivities();
+		}).error(function(error,status){
         if(status==403){
 		$scope.error = {message:""};
 		$scope.error.message = "Your user is not authorized for this action";
@@ -459,8 +462,8 @@ $scope.addIdea = function(){
   $scope.title ='';
   $scope.description ='';
   $scope.links=[];
-  $scope.subjectsSelected = [];
   $scope.newTags = [];
+  $scope.subjectsSelected = [];
   $scope.tags = [];
 };
 

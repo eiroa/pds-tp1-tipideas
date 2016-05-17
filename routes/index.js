@@ -347,7 +347,7 @@ router.post('/ideas/:idea/comments', auth, function(req, res, next) {
 
 
 
-router.post('/ideas/enroll/:idea', validateStudent, function(req, res, next) {
+router.post('/ideas/enroll/:idea', auth, validateStudent, function(req, res, next) {
        console.log("enrolling idea-> "+req.idea.author+ " " + req.idea.title);
 
          Idea.findById(req.idea._id, function(err, idea) {
@@ -425,7 +425,7 @@ router.post('/ideas/reject/:idea', validateDirector, function(req, res, next) {
 	res.sendStatus(200);
 });
 
-router.post('/ideas/delete/:idea', validateDirector,function(req, res, next) {
+router.post('/ideas/delete/:idea', auth,validateDirector,function(req, res, next) {
 
          Idea.findById(req.idea._id, function(err, idea) {
 
@@ -439,7 +439,7 @@ router.post('/ideas/delete/:idea', validateDirector,function(req, res, next) {
 	    var state = new IdeaState();
   		state.title = 'deleted';
   		idea.ideaState = state;
-  		console.log("enrolling");
+  		console.log("deleting idea...");
 	   
             state.save(function(err) {
                 if (err) res.send(err);
@@ -452,8 +452,8 @@ router.post('/ideas/delete/:idea', validateDirector,function(req, res, next) {
         });
 
 	var activity = new Logger(); 
-        console.log("trying to save log for enroll");
-        activity.enrollIdea(
+        console.log("trying to save log for delete");
+        activity.deleteIdea(
         	function(err){
     			if(err){ return next(err); }
  		},

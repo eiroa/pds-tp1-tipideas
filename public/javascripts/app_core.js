@@ -159,14 +159,14 @@ app.factory('ideas',['$http', 'auth','logger','subjects',function($http,auth,log
 	};
 
 	service.deleteIdea = function(idea){
-		return $http.post('ideas/delete/'+idea._id,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
-	
+		return $http.post('ideas/delete/'+idea._id,null,{
+			headers : {Authorization: 'Bearer '+auth.getToken()}
 		});
 	};
 
 	service.enroll = function(idea){
-		return $http.post('ideas/enroll/'+idea._id).success(function(data){
-			
+		return $http.post('ideas/enroll/'+idea._id,null,{
+			headers : {Authorization: 'Bearer '+auth.getToken()}
 		});
 	};
 

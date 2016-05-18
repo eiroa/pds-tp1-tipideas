@@ -154,7 +154,8 @@ app.factory('ideas',['$http', 'auth','logger','subjects',function($http,auth,log
 	};
 
 	service.accept = function(idea){
-		return $http.post('ideas/accept/'+idea._id).success(function(data){
+		return $http.post('ideas/accept/'+idea._id,null,{
+			headers : {Authorization: 'Bearer '+auth.getToken()}
 		});
 	};
 
@@ -172,8 +173,8 @@ app.factory('ideas',['$http', 'auth','logger','subjects',function($http,auth,log
 
 	
 	service.reject = function(idea){
-		return $http.post('ideas/reject/'+idea._id).success(function(data){
-			
+		return $http.post('ideas/reject/'+idea._id,null,{
+			headers : {Authorization: 'Bearer '+auth.getToken()}
 		});
 	};
 
@@ -499,14 +500,16 @@ function addSub(sub,col){
 }
 
 $scope.accept = function(idea){
-		ideas.accept(idea);
+		ideas.accept(idea).success(function(){
+			logger.getActivities();
+		});
 		 removeIdea(idea);
 		};
-                
-
 
 $scope.enroll = function(idea){
-		ideas.enroll(idea);
+		ideas.enroll(idea).success(function(){
+			logger.getActivities();
+		});
 		removeIdea(idea);
 		};
 
@@ -516,7 +519,9 @@ $scope.deleteIdea = function(idea){
 		};
 
 $scope.reject = function(idea){
-		ideas.reject(idea);
+		ideas.reject(idea).success(function(){
+			logger.getActivities();
+		});
 		removeIdea(idea);
 		};
 
@@ -531,7 +536,8 @@ app.controller('ideasCtrl', [
 'ideas',
 'idea',
 'auth',
-function($scope,ideas,idea,auth){
+'logger',
+function($scope,ideas,idea,auth,logger){
 
 	$scope.idea = idea;
 	$scope.isLoggedIn = auth.isLoggedIn;
@@ -546,6 +552,7 @@ function($scope,ideas,idea,auth){
 		date: Date.now()
   		}).success(function(comment) {
     			$scope.idea.comments.push(comment);
+    			logger.getActivities();
  	 });
 
 	  $scope.body = '';

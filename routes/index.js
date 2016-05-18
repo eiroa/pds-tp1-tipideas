@@ -319,26 +319,20 @@ router.post('/ideas/:idea/comments', auth, function(req, res, next) {
     	req.idea.save(function(err, idea) {
       		if(err){ return next(err); }
 
-      		res.json(comment);
-    	});
-  });
-
-});
-
-router.post('/ideas/:idea/comments', auth, function(req, res, next) {
-  var comment = new Comment(req.body);
-  comment.idea = req.idea;
-  comment.author = req.payload.username;
-
-  comment.save(function(err, comment){
-    if(err){ return next(err); }
-
-    req.idea.comments.push(comment);
-    	req.idea.save(function(err, idea) {
-      		if(err){ return next(err); }
+          var activity = new Logger(); 
+        console.log("trying to save log for a made comment");
+        activity.makeComment(
+          function(err){
+              if(err){ return next(err); }
+        },
+        req.idea.author, 
+        new Date()
+            ); 
 
       		res.json(comment);
     	});
+
+      
   });
 
 });
@@ -387,7 +381,7 @@ router.post('/ideas/enroll/:idea', auth, validateStudent, function(req, res, nex
 });
 
 
-router.post('/ideas/reject/:idea', validateDirector, function(req, res, next) {
+router.post('/ideas/reject/:idea', auth,validateDirector, function(req, res, next) {
 	Idea.findById(req.idea._id, function(err, idea) {
 
             if (err) res.send(err);
@@ -463,7 +457,7 @@ router.post('/ideas/delete/:idea', auth,validateDirector,function(req, res, next
 	res.sendStatus(200);
 });
 
-router.post('/ideas/accept/:idea', validateDirector,function(req, res, next) {
+router.post('/ideas/accept/:idea', auth, validateDirector,function(req, res, next) {
 	
 	
   	Idea.findById(req.idea._id, function(err, idea) {

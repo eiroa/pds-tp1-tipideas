@@ -51,4 +51,11 @@ LoggerSchema.methods.destroy = function(cb,author, date){
 	this.save(cb);
 };
 
+LoggerSchema.methods.makeComment = function(cb,author, date){
+	this.author = author;
+	this.date = date;
+	this.description= author + " made a comment ";
+	this.save(cb);
+};
+
 mongoose.model('Logger', LoggerSchema);

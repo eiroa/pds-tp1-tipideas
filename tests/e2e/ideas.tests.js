@@ -14,11 +14,7 @@
 
 
 			it("check if  is possible to create idea as director",function(){
-
 				expect(element(by.id("panelNewIdea")).isPresent()).to.be.truthy;
-
-
-
 			});
 
 			it("create 2 ideas, and verify log added",function(){
@@ -153,7 +149,7 @@
 					element.all(by.options('type as type.name for type in types')).filter(function(elem, index) {
 										return elem.getText().then(function(text) {
 	    								return text === 'Available ideas';
-								  		}); // select deleted ideas
+								  		}); 
 								}).first().click().then(function(){
 										element.all(by.repeater('idea in ideas')).then(function(ideas){
 											var ind = 0;
@@ -185,14 +181,13 @@
 						    								}else{
 						    									return false;
 						    								};
-												  		}); // select deleted ideas
+												  		}); 
 											}).first().isDisplayed().then(function(){
 												ideas[ind2].element(by.id('dropdownMenu')).click();
 												ideas[ind2].element(by.id('enrollIdea')).click();
 
-												 //logout and enter with admin
 												 element.all(by.repeater('activity in activities')).then(function(acts){
-						    						expect(acts.length).to.be.equal(lengthActivities+2); // 2=> creation and deletion log
+						    						expect(acts.length).to.be.equal(lengthActivities+2);
 						    					});
 
 															logout();
@@ -200,7 +195,7 @@
 															element.all(by.options('type as type.name for type in types')).filter(function(e, i) {
 																		return e.getText().then(function(text) {
 									    								return text === 'Ideas pending approval';
-																  		}); // select pending ideas
+																  		}); 
 																}).first().click().then(function(){
 																	
 

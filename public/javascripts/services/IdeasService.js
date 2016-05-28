@@ -77,28 +77,29 @@ app.factory('ideas',['$http', 'auth','logger','subjects',function($http,auth,log
 	};
 
 	service.accept = function(idea){
-		return $http.post('ideas/accept/'+idea._id).success(function(data){
+		return $http.post('ideas/accept/'+idea._id,null,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
 		});
 	};
 
 	service.deleteIdea = function(idea){
-		return $http.post('ideas/delete/'+idea._id,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
+		return $http.post('ideas/delete/'+idea._id,null,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
 	
 		});
 	};
 
 	service.enroll = function(idea){
-		return $http.post('ideas/enroll/'+idea._id).success(function(data){
+		return $http.post('ideas/enroll/'+idea._id,null,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
 			
 		});
 	};
 
 	
 	service.reject = function(idea){
-		return $http.post('ideas/reject/'+idea._id).success(function(data){
+		return $http.post('ideas/reject/'+idea._id,null,{headers : {Authorization: 'Bearer '+auth.getToken()}}).success(function(data){
 			
 		});
 	};
+
 
 	
         

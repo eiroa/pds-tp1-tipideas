@@ -28,8 +28,14 @@ var passport = require('passport');
 require('./models/Users');
 require('./config/passport');
 
+
+
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var userRoutes = require('./routes/userRoutes');
+var ideaRoutes = require('./routes/ideaRoutes');
+var subjectRoutes = require('./routes/subjectRoutes');
+var activityRoutes = require('./routes/activityRoutes');
+
 
 
 
@@ -42,15 +48,18 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/users', userRoutes);
+app.use('/ideas',ideaRoutes);
+app.use('/subjects',subjectRoutes);
+app.use('/activities',activityRoutes);
 
 
 app.use(expressWinston.logger({

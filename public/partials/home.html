@@ -5,9 +5,8 @@
 
 <div ng-show="isLoggedIn()">
 
-<select class="form-control" ng-model="data.ideasSort"  ng-change="req()" style="margin-bottom:10px;"
-ng-options="type as type.name for type in types">
-            <option value="">Select a group</option>
+<select class="form-control" ng-model="data.ideasSort"  ng-change="req()" style=" font-weight:bold;margin-bottom:20px;font-size:18px;color:blue" ng-options="type as type.name for type in types">
+            <option value="">Select a group of ideas</option>
   </select>
 
 

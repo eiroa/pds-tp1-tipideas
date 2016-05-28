@@ -1,6 +1,8 @@
 var gulp = require("gulp");
 var inject = require("gulp-inject");
-var minifier = require("gulp-htmlmin")
+var minifier = require("gulp-htmlmin");
+var jshint = require('gulp-jshint');
+var reporter = require('jshint-stylish');
 
 gulp.task("tarea1",function(){
 	console.log("esto es una tarea");
@@ -24,4 +26,11 @@ gulp.task("addDependencies",function(){
 	.pipe(inject(dependencies))
 	.pipe(minifier({collapseWhitespace:true}))
 	.pipe(gulp.dest("public"));
+});
+
+gulp.task('lint',function(){
+	return gulp.src(['routes/index.js'])
+		.pipe(jshint())
+		.pipe(jshint.reporter(reporter));
+
 });

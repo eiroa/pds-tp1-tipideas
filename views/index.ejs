@@ -47,7 +47,7 @@
     </ul>
     <ul class="nav navbar-nav pull-right">
     <li ng-show="isLoggedIn()">
-      <button class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Logout</button>
+      <button id="logout" class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Logout</button>
     </li>
     <li ng-hide="isLoggedIn()">
      <a href="/#/login"><button class="btn btn-success" >Login</button></a>

@@ -1,6 +1,5 @@
 var app = angular.module('tips', ['ui.router','angularMoment','ngTagsInput']);
 
-
 app.factory('auth',['$http','$window',function($http,$window){
 	var auth = {};
 

@@ -34,6 +34,7 @@ app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','
 		$scope.subjectsSelected = [];
 		$scope.links = [];
 		$scope.newTags = [];
+		$scope.tags = [];
 		$scope.isLoggedIn = auth.isLoggedIn;
 
 		$scope.ideas = ideas.ideas;
@@ -97,6 +98,7 @@ $scope.description ='';
 $scope.links=[];
 $scope.subjectsSelected = [];
 $scope.newTags = [];
+$scope.tags = [];
 };
 
 $scope.remove = function(idea){

@@ -1,7 +1,7 @@
 var app = angular.module('tips');
 
-app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','subjects',
-	function($scope,ideas,$state,$stateParams,auth,subjects){
+app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','subjects','logger',
+	function($scope,ideas,$state,$stateParams,auth,subjects,logger){
 		
 		
 		function checkStudent(){
@@ -85,6 +85,11 @@ app.controller('MainCtrl', [ '$scope', 'ideas','$state', '$stateParams','auth','
 				links: $scope.links,
 				tags: $scope.newTags,
 				user: auth.username
+			}).success(function(data){
+				data.subjects = $scope.copySubjectsSelected;
+				ideas.ideas.push(data);
+				$scope.copySubjectsSelected = [];
+				logger.getActivities();
 			}).error(function(error,status){
 				if(status==403){
 					$scope.error = {message:""};
@@ -99,6 +104,7 @@ $scope.links=[];
 $scope.subjectsSelected = [];
 $scope.newTags = [];
 $scope.tags = [];
+
 };
 
 $scope.remove = function(idea){
@@ -106,7 +112,7 @@ $scope.remove = function(idea){
 		console.log("idea borrada");
 		$state.reload();
 		removeIdea(idea);
-		
+		logger.getActivities();
 	});
 };
 
@@ -133,26 +139,32 @@ function addSub(sub,col){
 }
 
 $scope.accept = function(idea){
-	ideas.accept(idea);
-	removeIdea(idea);
-};
-
-
+		ideas.accept(idea).success(function(){
+			logger.getActivities();
+		});
+		 removeIdea(idea);
+		};
 
 $scope.enroll = function(idea){
-	ideas.enroll(idea);
-	removeIdea(idea);
-};
+		ideas.enroll(idea).success(function(){
+			logger.getActivities();
+		});
+		removeIdea(idea);
+		};
 
 $scope.deleteIdea = function(idea){
-	ideas.deleteIdea(idea);
-	removeIdea(idea);
-};
+		ideas.deleteIdea(idea).success(function(){
+			logger.getActivities();
+		});
+		removeIdea(idea);
+		};
 
 $scope.reject = function(idea){
-	ideas.reject(idea);
-	removeIdea(idea);
-};
+		ideas.reject(idea).success(function(){
+			logger.getActivities();
+		});
+		removeIdea(idea);
+		};
 
 $scope.currentUser = auth.currentUser;
 checkStudent();

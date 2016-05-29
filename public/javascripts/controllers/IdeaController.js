@@ -5,7 +5,8 @@ app.controller('ideasCtrl', [
 	'ideas',
 	'idea',
 	'auth',
-	function($scope,ideas,idea,auth){
+	'logger',
+	function($scope,ideas,idea,auth,logger){
 
 		$scope.idea = idea;
 		$scope.isLoggedIn = auth.isLoggedIn;
@@ -20,6 +21,7 @@ app.controller('ideasCtrl', [
 				date: Date.now()
 			}).success(function(comment) {
 				$scope.idea.comments.push(comment);
+				logger.getActivities();
 			});
 
 			$scope.body = '';

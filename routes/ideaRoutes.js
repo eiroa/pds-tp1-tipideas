@@ -142,180 +142,76 @@ router.post('/:idea/comments', auth, function(req, res, next) {
 
 
 router.post('/enroll/:idea', auth, hf.validateStudent, function(req, res, next) {
-       console.log("enrolling idea-> "+req.idea.author+ " " + req.idea.title);
+ console.log("user" + req.payload.username  +"enrolling idea from "+req.idea.author+ " " + req.idea.title);
 
-         Idea.findById(req.idea._id, function(err, idea) {
+ Idea.findById(req.idea._id, function(err, idea) {
+  if (err) res.send(err);
+  idea.enroll(req.payload.username, function(err) {
+    if (err) res.send(err);
+  });
 
-            if (err) res.send(err);
-
-            IdeaState.findByIdAndRemove(idea.ideaState, function (err){
-        if(err) { return next(err); }
-    console.log("available state deleted");
-    });
-
-      var state = new IdeaState();
-      state.title = 'pending';
-      idea.ideaState = state;
-      console.log("enrolling");
-     
-            state.save(function(err) {
-                if (err) res.send(err);
-            });
-            
-            idea.save(function(err) {
-                if (err) res.send(err);
-            });
-
-        });
-
-  var activity = new Logger(); 
-        console.log("trying to save log for enroll");
-        activity.enrollIdea(
-          function(err){
-          if(err){ return next(err); }
-    },
-    req.idea.author, 
-    new Date()
-        ); 
-  res.sendStatus(200);
+});
+ 
+ res.sendStatus(200);
 });
 
 
 router.post('/reject/:idea', auth, hf.validateDirector, function(req, res, next) {
   Idea.findById(req.idea._id, function(err, idea) {
-
-            if (err) res.send(err);
-
-      IdeaState.findByIdAndRemove(idea.ideaState, function (err){
-        if(err) { return next(err); }
-    console.log("pending state deleted");
+    if (err) res.send(err);
+    idea.reject(req.payload.username, function(err) {
+      if (err) res.send(err);
     });
 
-      var state = new IdeaState();
-      state.title = 'available';
-      idea.ideaState = state;
-      console.log("rejecting...");
-     
-            state.save(function(err) {
-                if (err) res.send(err);
-            });
-            // 
-            idea.save(function(err) {
-                if (err) res.send(err);
-            });
-            console.log("idea rejected");
-
-        });
-
-  var activity = new Logger(); 
-        console.log("trying to save log for reject");
-        activity.rejectIdea(
-          function(err){
-          if(err){ return next(err); }
-    },
-    req.idea.author, 
-    new Date()
-        ); 
+  });
+  
   res.sendStatus(200);
 });
 
 router.post('/delete/:idea', auth, hf.validateDirector,function(req, res, next) {
 
-         Idea.findById(req.idea._id, function(err, idea) {
+ Idea.findById(req.idea._id, function(err, idea) {
+  if (err) res.send(err);
+  idea.delet(req.payload.username, function(err) {
+    if (err) res.send(err);
+  });
 
-            if (err) res.send(err);
+});
 
-            IdeaState.findByIdAndRemove(idea.ideaState, function (err){
-        if(err) { return next(err); }
-    console.log("available state deleted");
-    });
-
-      var state = new IdeaState();
-      state.title = 'deleted';
-      idea.ideaState = state;
-      console.log("enrolling");
-     
-            state.save(function(err) {
-                if (err) res.send(err);
-            });
-            
-            idea.save(function(err) {
-                if (err) res.send(err);
-            });
-
-        });
-
-  var activity = new Logger(); 
-        console.log("trying to save log for enroll");
-        activity.enrollIdea(
-          function(err){
-          if(err){ return next(err); }
-    },
-    req.idea.author, 
-    new Date()
-        ); 
-  res.sendStatus(200);
+ res.sendStatus(200);
 });
 
 router.post('/accept/:idea', auth, hf.validateDirector,function(req, res, next) {
   
-  
-    Idea.findById(req.idea._id, function(err, idea) {
-
-            if (err) res.send(err);
-
-      IdeaState.findByIdAndRemove(idea.ideaState, function (err){
-        if(err) { return next(err); }
-    console.log("pending state deleted");
+  Idea.findById(req.idea._id, function(err, idea) {
+    if (err) res.send(err);
+    idea.accept(req.payload.username, function(err) {
+      if (err) res.send(err);
     });
+    
 
-      var state = new IdeaState();
-      state.title = 'accepted';
-      idea.ideaState = state;
-      console.log("accepting...");
-     
-            state.save(function(err) {
-                if (err) res.send(err);
-            });
-            // 
-            idea.save(function(err) {
-                if (err) res.send(err);
-            });
+  });
 
-        });
-
-  var activity = new Logger(); 
-        console.log("trying to save log for accept");
-        activity.acceptIdea(
-          function(err){
-          if(err){ return next(err); }
-    },
-    req.idea.author, 
-    new Date()
-        ); 
   res.sendStatus(200);
 });
 
 
 router.post('/remove/:idea',auth, hf.validateDirector,function(req, res, next) {
   Idea.findByIdAndRemove(req.idea.id, function (err){
-      if(err) { return next(err); }
+    if(err) { return next(err); }
 
-   });
+  });
   var activity = new Logger(); 
 
-        activity.destroy(
-          function(err){
-          if(err){ return next(err); }
+  activity.destroy(
+    function(err){
+      if(err){ return next(err); }
     },
     req.idea.author, 
     new Date()
-        ); 
+    ); 
   res.sendStatus(200);
 });
-
-
-
 
 
 

@@ -15,3 +15,10 @@ IdeaStateSchema.methods.make = function(cb,title,description) {
 
 
 mongoose.model('IdeaState', IdeaStateSchema);
+
+
+var IdeaState = mongoose.model('IdeaState', IdeaStateSchema);
+
+module.exports = {
+  IdeaState: IdeaState
+}

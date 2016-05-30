@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
-var IdeaStateSchema = require('mongoose').model('IdeaState').schema;
+var IdeaState = require("../models/IdeaState").IdeaState;
+var Logger = require("../models/Logger").Logger;
 
 var IdeaSchema = new mongoose.Schema({
   title: String,
@@ -27,38 +28,97 @@ IdeaSchema.methods.downvote = function(cb) {
   this.save(cb);
 };
 
+IdeaSchema.methods.deleteState = function(){
+  IdeaState.findByIdAndRemove(this.ideaState, function (err){
+        if(err) { console.log("error deleting");return next(err); }
+        console.log("deleting state ");
+  });
+}
+
 
 //Turns pending to accepted  - should create a TIP entity
-IdeaSchema.methods.accept = function(cb) {
-  var role = new IdeaState();
-  role.title = 'accepted';
-  this.role = role;
+IdeaSchema.methods.accept = function(user,cb) {
+  this.deleteState();
+
+  var state = new IdeaState();
+  state.title = 'accepted';
+  this.ideaState = state;
+  
+  state.save(cb);
   this.save(cb);
+  
+  var activity = new Logger(); 
+        activity.acceptIdea(
+            function(err){
+            if(err){ return next(err); }
+           },
+          user, 
+           new Date()
+         ); 
 };
 
-IdeaSchema.methods.enroll = function(cb,idea) {
-  var role = new IdeaState();
-  role.title = 'pending';
-  idea.ideaState = role;
-  console.log("enrolling");
-  idea.save(cb);
+//turns available to pending
+IdeaSchema.methods.enroll = function(user,cb) {
+  this.deleteState();
+
+  var state = new IdeaState();
+  state.title = 'pending';
+  this.ideaState = state;
+
+  state.save(cb);
+  this.save(cb);
+  
+  var activity = new Logger(); 
+        activity.enrollIdea(
+            function(err){
+            if(err){ return next(err); }
+           },
+          user, 
+           new Date()
+         ); 
 };
 
 //Turns from pending to available
-IdeaSchema.methods.reject = function(cb) {
-  var role = new IdeaState();
-  role.title = 'available';
-  this.role = role;;
+IdeaSchema.methods.reject = function(user,cb) {
+  this.deleteState();
+
+  var state = new IdeaState();
+  state.title = 'pending';
+  this.ideaState = state;
+  
+  state.save(cb);
   this.save(cb);
+  
+  var activity = new Logger(); 
+        activity.rejectIdea(
+            function(err){
+            if(err){ return next(err); }
+           },
+          user, 
+           new Date()
+         ); 
 };
 
 
 //Turns to deleted state
-IdeaSchema.methods.delet = function(cb) {
-  var role = new IdeaState();
-  role.title = 'deleted';
-  this.role = role;
+IdeaSchema.methods.delet = function(user,cb) {
+  this.deleteState();
+
+  var state = new IdeaState();
+  state.title = 'deleted';
+  this.ideaState = state;
+  
+  state.save(cb);
   this.save(cb);
+  
+  var activity = new Logger(); 
+        activity.deleteIdea(
+            function(err){
+            if(err){ return next(err); }
+           },
+          user, 
+           new Date()
+         ); 
 };
 
 

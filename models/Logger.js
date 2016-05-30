@@ -59,3 +59,11 @@ LoggerSchema.methods.commentIdea = function(cb,author, date){
 };
 
 mongoose.model('Logger', LoggerSchema);
+
+
+
+var Logger = mongoose.model('Logger', LoggerSchema);
+
+module.exports = {
+  Logger: Logger
+}

@@ -33,4 +33,4 @@ app.controller('ideasCtrl', [
 		$scope.downVote = function(comment){
 			ideas.dislike('/ideas/' + idea._id + '/comments/'+comment._id+'/downvote',comment)
 		};
-	}]);
+}]);

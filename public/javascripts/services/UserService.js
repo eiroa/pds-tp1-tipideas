@@ -10,7 +10,7 @@ app.factory('users',['$http', 'auth',function($http,auth){
       			angular.copy(data, service.users);
 			console.log('users loaded');
     		});
-        };
+     };
 
 	service.changeRole = function(user,role){
 		return $http.post('/users/changeRole',{ _id :user._id, value:role.value},{
@@ -19,7 +19,6 @@ app.factory('users',['$http', 'auth',function($http,auth){
 			user.userRole.title=role.value;
 		});
 	};
-
 
 	return service;
 }]);

@@ -5,6 +5,6 @@ before_script:
   - npm install -g gulp
   - npm install
 script:
-  - gulp test_backend
-  - gulp test_frontend
-  - gulp test_e2e
+  - gulp tests_backend
+  - gulp tests_frontend
+  - gulp tests_e2e

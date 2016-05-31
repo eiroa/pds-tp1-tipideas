@@ -21,3 +21,9 @@ CommentSchema.methods.downvote = function(cb) {
 };
 
 mongoose.model('Comment', CommentSchema);
+
+var Comment = mongoose.model('Comment', CommentSchema);
+
+module.exports = {
+  Comment: Comment
+}

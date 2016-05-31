@@ -5,8 +5,7 @@ var User = mongoose.model('User');
 
 
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
+passport.use( new LocalStrategy( function(username, password, done) {
     User.findOne({ username: username }).populate('userRole').exec( function (err, user) {
       if (err) { return done(err); }
       if (!user) {
@@ -15,6 +14,7 @@ passport.use(new LocalStrategy(
       if (!user.validPassword(password)) {
         return done(null, false, { message: 'Incorrect password.' });
       }
+      console.log("gotcha");
       if (user.userRole.title == 'pending') {
         return done(null, false, { message: 'Your user has to be activated first. Please contact the director for more info' });
       }

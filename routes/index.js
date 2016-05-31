@@ -2,14 +2,15 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var passport = require('passport');
-var jwt = require('express-jwt');
 var User = mongoose.model('User');
 var UserRole = mongoose.model('UserRole');
 var Logger = mongoose.model('Logger');
 
-var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
-var hf = require('./helperFunctions');
 
+var jwt = require('express-jwt');
+var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
+
+require('../config/passport');
 
 
 router.get('/', function(req, res, next) {

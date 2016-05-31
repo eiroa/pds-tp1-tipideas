@@ -1,4 +1,5 @@
-var express = require('express');
+var mongoose = require('mongoose');
+var passport = require('passport');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -7,11 +8,12 @@ var bodyParser = require('body-parser');
 
 var expressWinston = require('express-winston');
 var winston = require('winston'); // for transports.Console
+var express = require('express');
 
-var app = express();
 
-var mongoose = require('mongoose');
+
 mongoose.connect('mongodb://localhost/tips');
+var app = express();
 
 require('./models/IdeaState');
 require('./models/UserRole');
@@ -23,7 +25,7 @@ require('./models/Tips');
 
 
 
-var passport = require('passport');
+
 
 require('./models/Users');
 require('./config/passport');

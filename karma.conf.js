@@ -10,13 +10,25 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'requirejs','chai','sinon'],
+    frameworks: ['mocha','chai','sinon'],
 
 
     // list of files / patterns to load in the browser
 
      // ojo aca, tienen que ir las mismas dependencias que en nuestro html  angular, etc
     files: [
+    'public/javascripts/jquery-2.2.3.min.js',
+    'public/stylesheets/bootstrap/dist/js/bootstrap.min.js',
+    'public/javascripts/angular13.js',
+    'node_modules/angular-mocks/angular-mocks.js',
+    'public/javascripts/ui-router.js',
+    'public/javascripts/moment.js',
+    'public/javascripts/angular-moment.js',
+    'public/javascripts/ng-tags-input.min.js',
+    'public/javascripts/app_core.js',
+    'public/javascripts/services/*.js',
+    'public/javascripts/controllers/*.js',
+    'tests/frontend/*.js'
     ],
 
 
@@ -56,7 +68,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode

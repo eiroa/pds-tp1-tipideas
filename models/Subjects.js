@@ -13,3 +13,10 @@ SubjectSchema.methods.make = function(cb,title,description) {
 };
 
 mongoose.model('Subject', SubjectSchema);
+
+
+var Subject = mongoose.model('Subject', SubjectSchema);
+
+module.exports = {
+  Subject: Subject
+}

@@ -15,3 +15,11 @@ UserRoleSchema.methods.make = function(cb,title,description) {
 
 
 mongoose.model('UserRole', UserRoleSchema);
+
+
+var UserRole = mongoose.model('UserRole', UserRoleSchema);
+
+module.exports = {
+  UserRole: UserRole
+}
+

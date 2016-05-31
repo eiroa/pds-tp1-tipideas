@@ -83,7 +83,7 @@ IdeaSchema.methods.reject = function(user,cb) {
   this.deleteState();
 
   var state = new IdeaState();
-  state.title = 'pending';
+  state.title = 'available';
   this.ideaState = state;
   
   state.save(cb);
@@ -123,3 +123,11 @@ IdeaSchema.methods.delet = function(user,cb) {
 
 
 mongoose.model('Idea', IdeaSchema);
+
+
+var Idea = mongoose.model('Idea', Idea);
+
+module.exports = {
+  Idea: Idea
+}
+

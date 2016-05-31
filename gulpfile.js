@@ -1,9 +1,4 @@
 /*
-var gulp = require("gulp");
-var inject = require("gulp-inject");
-var minifier = require("gulp-htmlmin");
-var jshint = require('gulp-jshint');
-var reporter = require('jshint-stylish');
 
 gulp.task("tarea1",function(){
 	console.log("esto es una tarea");
@@ -44,47 +39,23 @@ var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var wiredep = require('wiredep').stream
 var protractor = require("gulp-protractor").protractor;
+var minifier = require("gulp-htmlmin");
+var jshint = require('gulp-jshint');
+var reporter = require('jshint-stylish');
 var webdriver_update = require('gulp-protractor').webdriver_update;
 var webdriver_standalone = require("gulp-protractor").webdriver_standalone;
 var Server = require('karma').Server;
+var bowerFiles = require('gulp-main-bower-files');
 
 var inject = require('gulp-inject');
 
 
-
-
-var paths = {
-	views: 'views/',
-	dist: 'dist/',
-	src: 'public',
-	index: 'views/index.ejs'
-};
-
-gulp.task('inject-vendor', function() {
-	gulp.src(paths.index)
-	.pipe(wiredep({}))
-	.pipe(gulp.dest(paths.dist));
+gulp.task('lint', function() {
+    return gulp.src('*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter(reporter));
 });
 
-gulp.task('inject-own', function() {
-	gulp.src(paths.index)
-	.pipe(inject(gulp.src(paths.sources, {read: false})))
-	.pipe(gulp.dest('./www'));
-});
-
-
-
-gulp.task('wiredep',function(){
-	log('Wire up the bower cssjs and our app js into the html')
-	var options = config.getWiredepDefaultOptions();  
-	var wiredep = require('wiredep').stream;
-
-	return gulp 
-	.src('views/index.ejs')  
-	.pipe(wiredep(options))
-	.pipe($.inject(gulp.src(config.js)))  
-	.pipe(gulp.dest(config.client));  
-});
 
 
 gulp.task('bower', function () {
@@ -126,6 +97,8 @@ gulp.task('tests_frontend', function (done) {
 	}, done).start();
 });
 
-gulp.task("test",["tests_backend","tests_frontend","tests_e2e"],function(done){
-	done();
-});
+gulp.task("tests_backAndFront",["tests_backend","tests_frontend"]);
+
+gulp.task("test",["tests_backend","tests_frontend","tests_e2e"]);
+
+gulp.task('default', ['lint', 'tests_backAndFront']);

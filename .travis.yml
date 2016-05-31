@@ -5,8 +5,4 @@ before_script:
   - npm install -g gulp
   - npm install
 script:
-  - webdriver-manager update
-  - webdriver-manager start
-  - gulp tests_backend
-  - gulp tests_frontend
-  - gulp tests_e2e
+  - gulp 

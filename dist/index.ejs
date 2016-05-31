@@ -1,0 +1,137 @@
+<html>
+ <head>
+ <title> Sistema para la gestión de TIPS -  Practicas desarrollo software</title>
+<link href="/stylesheets/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+<link href="/stylesheets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- bower:css -->
+<link rel="stylesheet" href="../bower_components/bootstrap-select/dist/css/bootstrap-select.css" />
+<link rel="stylesheet" href="../bower_components/ng-tags-input/ng-tags-input.css" />
+<!-- endbower -->
+
+
+
+<!-- inject:css   -->
+  <!-- endinject   -->
+
+
+
+<!-- bower:js -->
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+<script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="../bower_components/moment/moment.js"></script>
+<script src="../bower_components/angular-moment/angular-moment.js"></script>
+<script src="../bower_components/ng-tags-input/ng-tags-input.js"></script>
+<!-- endbower -->
+
+<!-- inject:js   -->
+  <!-- endinject   -->
+
+ <script src="/javascripts/jquery-2.2.3.min.js"></script>
+ <script src="/stylesheets/bootstrap/dist/js/bootstrap.min.js"></script>
+ <script src="/javascripts/angular13.js"></script>
+ <script src="/javascripts/ui-router.js"></script>
+ <script src="/javascripts/moment.js"></script>
+ <script src="/javascripts/angular-moment.js"></script>
+ <script src="/javascripts/ng-tags-input.min.js"></script>
+ <link  href="/stylesheets/bootstrap-select.min.css" rel="stylesheet">
+ <link  href="/stylesheets/ng-tags-input.bootstrap.min.css" rel="stylesheet">
+ <link  href="/stylesheets/ng-tags-input.min.css" rel="stylesheet">
+ <script src="/javascripts/bootstrap-select.min.js"></script>
+
+
+    <script src="/javascripts/app_core.js"></script>
+    <script src="/javascripts/services/UserService.js"></script>
+    <script src="/javascripts/services/ActivityService.js"></script>
+    <script src="/javascripts/services/IdeasService.js"></script>
+    <script src="/javascripts/services/SubjectService.js"></script>
+    
+    <script src="/javascripts/controllers/ActivityController.js"></script>
+    <script src="/javascripts/controllers/AuthController.js"></script>
+    <script src="/javascripts/controllers/IdeaController.js"></script>
+    <script src="/javascripts/controllers/MainController.js"></script>
+    <script src="/javascripts/controllers/NavController.js"></script>
+    <script src="/javascripts/controllers/SubjectController.js"></script>
+    <script src="/javascripts/controllers/UserController.js"></script>
+    
+  
+
+ </head>
+
+
+ <body ng-app="tips">
+
+ <nav class="navbar navbar-default" ng-controller="NavCtrl">
+    <ul class="nav navbar-nav">
+      <li ng-show="isLoggedIn()"><a> <strong id="user-id">{{ currentUser() }}</strong></a></li>
+      <li ng-hide="isLoggedIn()">
+     <a href="/#/register"><button class="btn btn-info" >Register</button></a>
+    </li>
+    </ul>
+    <ul class="nav navbar-nav pull-right">
+    <li ng-show="isLoggedIn()">
+      <button id="logout" class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Logout</button>
+    </li>
+    <li ng-hide="isLoggedIn()">
+     <a href="/#/login"><button class="btn btn-success" >Login</button></a>
+    </li>
+    </ul>
+  </nav>
+
+
+  <div class="row">
+
+    
+  <div class="col-md-3 col-xs-12 container-fluid" style="margin-top:20px;margin-left:20px;max-height:600px;" ng-controller="ActivityCtrl">
+	 <h4   ng-show="isLoggedIn()" class="text-info text-center">
+        Activity log
+    </h4>
+   <div ng-show="isLoggedIn()" class="jumbotron pre-scrollable" style="max-height:600px;">
+
+   
+    <div  class="well" ng-repeat="activity in activities" >
+	
+        <span >{{activity.description}} </span>
+	<span am-time-ago="activity.date"></span>
+	
+    </div>
+   </div>
+  </div>
+
+  <div class="col-md-6 col-xs-12">	
+    <ui-view></ui-view>
+  </div>
+  
+  <div  ng-controller="NavCtrl"   ng-show="isLoggedIn()" class="col-md-2 col-xs-12" style="margin-top:20px;" >
+   <div class="jumbotron">
+
+    <h4   class="text-info text-center">
+        Actions
+    </h4>
+	
+	
+		
+
+
+	<div class="dropdown text-center">
+<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	    Actions
+	    <span class="caret"></span>
+	  </button>
+	 
+	  <ul class="dropdown-menu">
+	    <li ng-show ="validateDir()"><a href="/#/users">User administration</a></li>
+	     <li ng-show ="validateDir()"><a href="/#/subjects">Subjects administration</a></li>
+	  </ul>
+	</div>
+
+   </div>
+
+  </div>
+    
+
+ </body>
+</html>

@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "body-parser": "^1.13.3",
+    "bower": "^1.7.9",
     "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
     "ejs": "~2.3.3",
@@ -36,8 +37,20 @@
   },
   "devDependencies": {
     "angular-mocks": "^1.5.6",
+    "browser-sync": "^2.12.10",
     "chai": "^3.5.0",
+    "del": "^2.2.0",
     "express-debug": "^1.1.1",
+    "gulp-angular-protractor": "^0.1.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-ignore": "^2.0.1",
+    "gulp-karma": "0.0.5",
+    "gulp-main-bower-files": "^1.5.1",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-mocha": "^2.2.0",
+    "gulp-protractor": "^2.3.0",
+    "gulp-rev": "^7.0.0",
     "karma": "^0.13.22",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.2.3",
@@ -53,8 +66,11 @@
     "phantomjs-prebuilt": "^2.1.7",
     "proxyquire": "^1.7.9",
     "requirejs": "^2.2.0",
+    "selenium-server-standalone-jar": "^2.53.0",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
-    "supertest": "^1.2.0"
+    "supertest": "^1.2.0",
+    "useref": "^1.2.0",
+    "wiredep": "^4.0.0"
   }
 }

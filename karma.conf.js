@@ -17,17 +17,9 @@ module.exports = function(config) {
 
      // ojo aca, tienen que ir las mismas dependencias que en nuestro html  angular, etc
     files: [
-    'public/javascripts/jquery-2.2.3.min.js',
-    'public/stylesheets/bootstrap/dist/js/bootstrap.min.js',
-    'public/javascripts/angular13.js',
+    'public/javascripts/vendor/js/vendor.js',
     'node_modules/angular-mocks/angular-mocks.js',
-    'public/javascripts/ui-router.js',
-    'public/javascripts/moment.js',
-    'public/javascripts/angular-moment.js',
-    'public/javascripts/ng-tags-input.min.js',
-    'public/javascripts/app_core.js',
-    'public/javascripts/services/*.js',
-    'public/javascripts/controllers/*.js',
+    'public/javascripts/local/local.js',
     'tests/frontend/*.js'
     ],
 

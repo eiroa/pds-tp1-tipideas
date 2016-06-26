@@ -10,9 +10,8 @@ var expressWinston = require('express-winston');
 var winston = require('winston'); // for transports.Console
 var express = require('express');
 
-
-
-mongoose.connect('mongodb://localhost/tips');
+var externalMongo = process.env.HEROKU_MONGODB_URI // heroku config var for external mongodb in mlab
+mongoose.connect(externalMongo || 'mongodb://localhost/tips');
 var app = express();
 
 require('./models/IdeaState');

@@ -6,3 +6,13 @@ before_script:
   - npm install
 script:
   - gulp 
+
+deploy:
+
+  provider: heroku
+
+  app: tips-pdes
+
+  api_key:
+
+    secure: $HEROKU_API_KEY

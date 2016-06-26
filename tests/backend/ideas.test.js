@@ -43,6 +43,7 @@ describe('Testing idea functionality - ', function(){
 	});
 
 	describe('Verifying idea properties', function(){
+		this.timeout(10000);
 		it('verify title', function(done){
 			expect(idea).to.have.property("title").equal("new");
 			done();

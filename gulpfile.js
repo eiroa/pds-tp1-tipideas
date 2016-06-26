@@ -41,7 +41,7 @@ gulp.task("addDependencies",function(){
 });
 
 var srcs = {
-    libJs:["public/javascripts/vendor/js/*.js"],
+    libJs:["public/javascripts/vendor/js/*min.js"],
     libCss:["public/javascripts/vendor/css/*.css"],
 	fonts:["public/javascripts/vendor/fonts/*.*"],
     locals: ["public/javascripts/app_core.js", "public/javascripts/controllers/*.js", "public/javascripts/services/*.js"],

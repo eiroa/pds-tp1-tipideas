@@ -70,7 +70,7 @@ var dest_path =  'public/javascripts/vendor';
 // grab libraries files from bower_components, minify and push in /public
 gulp.task('publish-js', function() {
 
-        const jsFilter = gulpFilter('**/*.js', {restore: true});
+        var jsFilter = gulpFilter('**/*.js', {restore: true});
 
         return gulp.src(bower())
 
@@ -95,7 +95,7 @@ gulp.task('publish-local-js', function() {
 });
 gulp.task('publish-css', function() {
 
-        const cssFilter = gulpFilter('**/*.css', {restore: true});
+        var cssFilter = gulpFilter('**/*.css', {restore: true});
 
         return gulp.src(bower({
             overrides: {
@@ -120,7 +120,7 @@ gulp.task('publish-css', function() {
 
 gulp.task('publish-less', function() {
 
-        const lessFilter = gulpFilter('**/*.less', {restore: true});
+        var lessFilter = gulpFilter('**/*.less', {restore: true});
 
         return gulp.src(bower())
         .pipe(lessFilter)
@@ -131,7 +131,7 @@ gulp.task('publish-less', function() {
 
 gulp.task('publish-fonts', function() {
 
-        const fontFilter = gulpFilter(['*.eot', '*.woff', '*.svg', '*.ttf'], {restore: true});
+        var fontFilter = gulpFilter(['*.eot', '*.woff', '*.svg', '*.ttf'], {restore: true});
 
         return gulp.src(bower({
             overrides: {
@@ -159,7 +159,7 @@ gulp.task('tests_backend',function(){
 	})
 	.once('end', function () {
 		process.exit();
-	});;
+	});
 });
 
 

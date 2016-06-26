@@ -55,7 +55,7 @@ describe("router Ideas", function() {
 	
 
 	describe("New user registration", function(){
-		
+		this.timeout(15000);
 		describe("Executing post request towards resource /register", function(){
 			it("should register a new user", function(done){
 				superTest(app)

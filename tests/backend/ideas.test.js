@@ -9,7 +9,7 @@ var Logger = require("../../models/Logger.js").Logger;
 
 
 describe('Testing idea functionality - ', function(){
-
+	this.timeout(10000);
 	before(function(done){
 		mockgoose(mongoose).then(function(){
 			mongoose.connect("mongodb://localhost/tips-ideas-test");
@@ -21,6 +21,7 @@ describe('Testing idea functionality - ', function(){
 	var idea;
 
 	beforeEach(function(done){
+		this.timeout(10000);
 		idea = new Idea();
 		state = new IdeaState();
 		state.title = "available";
@@ -68,6 +69,7 @@ describe('Testing idea functionality - ', function(){
 
 
 	describe("verify method enroll",function(){
+		this.timeout(10000);
 		it('should have an state with title pending, plus one log must have beed created', function(done){
 			idea.enroll("bot",function(err){if(err) return next(err);})
 			expect(idea.ideaState).to.have.property("title").equal("pending");
@@ -83,6 +85,7 @@ describe('Testing idea functionality - ', function(){
 	});
 
 	describe("verify method delete",function(){
+		this.timeout(10000);
 		it('should have an state with title deleted, plus one log must have beed created', function(done){
 			idea.delet("bot",function(err){if(err) return next(err);})
 			expect(idea.ideaState).to.have.property("title").equal("deleted");
@@ -97,6 +100,7 @@ describe('Testing idea functionality - ', function(){
 	});
 
 	describe("verify method accept",function(){
+		this.timeout(10000);
 		it('should have an state with title accepted, plus one log must have beed created', function(done){
 			idea.accept("bot",function(err){if(err) return next(err);})
 			expect(idea.ideaState).to.have.property("title").equal("accepted");
@@ -111,6 +115,7 @@ describe('Testing idea functionality - ', function(){
 	});
 
 	describe("verify method reject",function(){
+		this.timeout(10000);
 		it('should have an state with title available, plus one log must have beed created', function(done){
 			idea.reject("bot",function(err){if(err) return next(err);})
 			expect(idea.ideaState).to.have.property("title").equal("available");

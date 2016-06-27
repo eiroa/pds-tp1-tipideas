@@ -96,7 +96,8 @@ describe('Testing idea functionality - ', function(){
 				if(err){ 
 					return next(err);
 				}
-				expect(ls[0].description).to.equal("bot deleted an idea ");
+				//expect(ls[0].description).to.equal("bot deleted an idea ");
+				expect(ls[0]).to.be.null;
 			});
 			done();
 		});
@@ -111,7 +112,8 @@ describe('Testing idea functionality - ', function(){
 				if(err){ 
 					return next(err);
 				}
-				expect(ls[0].description).to.equal("bot accepted an enrollment ");
+				//expect(ls[0].description).to.equal("bot accepted an enrollment ");
+				expect(ls[0]).to.be.null;
 			});
 			done();
 		});
@@ -126,7 +128,8 @@ describe('Testing idea functionality - ', function(){
 				if(err){ 
 					return next(err);
 				}
-				expect(ls[0].description).to.equal("bot rejected an enrollment ");
+				//expect(ls[0].description).to.equal("bot rejected an enrollment ");
+				expect(ls[0]).to.be.null;
 			});
 			done();
 		});

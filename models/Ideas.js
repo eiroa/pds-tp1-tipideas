@@ -76,6 +76,7 @@ IdeaSchema.methods.enroll = function(user,cb) {
           user, 
            new Date()
          ); 
+        console.log("enroll log attempted");
 };
 
 //Turns from pending to available

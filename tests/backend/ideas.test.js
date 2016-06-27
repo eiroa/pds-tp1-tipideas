@@ -72,7 +72,13 @@ describe('Testing idea functionality - ', function(){
 		this.timeout(15000);
 		it('should have an state with title pending, plus one log must have beed created', function(done){
 			idea.enroll("bot",function(err){if(err) return next(err);})
+			console.log(idea.ideaState.title+ '<--- title ??? ');
 			expect(idea.ideaState).to.have.property("title").equal("pending");
+			var c = 0;
+			while (c < 50000){
+				console.log(c);
+				c++;
+			}
 			Logger.find({},function(err, ls){
 				if(err){ 
 					return next(err);

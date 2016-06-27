@@ -26,6 +26,7 @@ LoggerSchema.methods.enrollIdea = function(cb,author, date){
 	this.date = date;
 	this.description= author + " desires to enroll to an idea ";
 	this.save(cb);
+	console.log(" enroll log saved");
 };
 
 

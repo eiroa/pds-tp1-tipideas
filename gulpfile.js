@@ -52,7 +52,7 @@ var srcs = {
 
 
 
-gulp.task("inject-dependencies", ["publish-components"], function() {
+gulp.task("inject-dependencies", ["lint","publish-components"], function() {
     var libJs = gulp.src(srcs.libJs, {read: false});
     var libCss = gulp.src(srcs.libCss, {read: false});
 	var fonts = gulp.src(srcs.fonts, {read: false});
@@ -149,23 +149,20 @@ gulp.task('publish-fonts', function() {
 
 gulp.task("publish-components", ["publish-js","publish-css","publish-local-js"]);
 
-gulp.task("make", ["inject-dependencies"]);
+gulp.task("make", ["lint","inject-dependencies"]);
 
-gulp.task('tests_backend',function(){
+gulp.task('tests_backend', ['make'],function(){
 	return gulp.src('./tests/backend/*.js',{read:false})
 	.pipe(mocha({reporter:'nyan'}))
 	.once('error', function () {
 		process.exit(1);
 	})
-	.once('end', function () {
-		process.exit();
-	});
 });
 
 
 gulp.task('webdriver_update', webdriver_update);
 
-gulp.task('tests_e2e', ['webdriver_update'], function(cb) {
+gulp.task('tests_e2e', ['webdriver_update','tests_frontend'], function(cb) {
 	gulp.src(['./tests/e2e/*.js']).pipe(protractor({
 		configFile: 'protractor.conf.js',
 	})).once('error', function () {
@@ -176,14 +173,18 @@ gulp.task('tests_e2e', ['webdriver_update'], function(cb) {
         });        
 });
 
-gulp.task('tests_frontend', function (done) {
-	new Server({
-		configFile: __dirname + '/karma.conf.js',
-		singleRun: true
-	}, done).start();
+gulp.task('tests_frontend', ['tests_backend'],function (done) {
+	var karmaServer = new Server({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }, function (exitCode) {
+        done();
+        process.exit(exitCode);
+    }).start();
+
 });
 
-gulp.task("tests_backAndFront",["tests_backend","tests_frontend"]);
+gulp.task("tests_backAndFront",["make","tests_backend","tests_frontend"]);
 
 gulp.task("test",["tests_backend","tests_frontend","tests_e2e"]);
 

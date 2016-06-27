@@ -75,8 +75,7 @@ describe('Testing idea functionality - ', function(){
 			console.log(idea.ideaState.title+ '<--- title ??? ');
 			expect(idea.ideaState).to.have.property("title").equal("pending");
 			var c = 0;
-			while (c < 50000){
-				console.log(c);
+			while (c < 100000){
 				c++;
 			}
 			Logger.find({},function(err, ls){

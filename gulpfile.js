@@ -154,9 +154,7 @@ gulp.task("make", ["lint","inject-dependencies"]);
 gulp.task('tests_backend', ['make'],function(){
 	return gulp.src('./tests/backend/*.js',{read:false})
 	.pipe(mocha({reporter:'nyan'}))
-	.once('end', function () {
-            process.exit();
-        });   
+	 
 });
 
 
@@ -188,4 +186,4 @@ gulp.task("tests_backAndFront",["make","tests_backend","tests_frontend"]);
 
 gulp.task("test",["tests_backend","tests_frontend","tests_e2e"]);
 
-gulp.task('default', ['lint', 'make','tests_backend']);
+gulp.task('default', ['lint', 'make','tests_backAndFront']);

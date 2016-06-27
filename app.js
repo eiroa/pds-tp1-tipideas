@@ -6,8 +6,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var expressWinston = require('express-winston');
-var winston = require('winston'); // for transports.Console
+//var expressWinston = require('express-winston');
+//var winston = require('winston'); // for transports.Console
 var express = require('express');
 
 var externalMongo = process.env.HEROKU_MONGODB_URI // heroku config var for external mongodb in mlab
@@ -62,7 +62,7 @@ app.use('/ideas',ideaRoutes);
 app.use('/subjects',subjectRoutes);
 app.use('/activities',activityRoutes);
 
-
+/*
 app.use(expressWinston.logger({
       transports: [
         new winston.transports.Console({
@@ -76,7 +76,7 @@ app.use(expressWinston.logger({
       colorStatus: true, // Color the status code, using the Express/morgan color palette (default green, 3XX cyan, 4XX yellow, 5XX red). Will not be recognized if expressFormat is true
       ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
     }));
-
+*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

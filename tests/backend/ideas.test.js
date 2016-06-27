@@ -77,6 +77,11 @@ describe('Testing idea functionality - ', function(){
 				if(err){ 
 					return next(err);
 				}
+				
+				
+				console.log(ls.toString() + ' <- ls');
+				console.log(ls[0].toString() + ' <- ls 0');
+				console.log(ls[0].description+ ' <- ls 0  desc');
 				expect(ls[0].description).to.equal("bot desires to enroll to an idea ");
 			});
 

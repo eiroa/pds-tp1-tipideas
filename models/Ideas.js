@@ -59,6 +59,7 @@ IdeaSchema.methods.accept = function(user,cb) {
 
 //turns available to pending
 IdeaSchema.methods.enroll = function(user,cb) {
+  console.log("attempting  enroll...");
   this.deleteState();
 
   var state = new IdeaState();
@@ -66,17 +67,16 @@ IdeaSchema.methods.enroll = function(user,cb) {
   this.ideaState = state;
 
   state.save(cb);
-  this.save(cb);
+  
   
   var activity = new Logger(); 
         activity.enrollIdea(
-            function(err){
-            if(err){ return next(err); }
-           },
+            cb,
           user, 
            new Date()
          ); 
         console.log("enroll log attempted");
+  this.save(cb);
 };
 
 //Turns from pending to available

@@ -1,103 +1,131 @@
 <html>
- <head>
+<head>
  <title> Sistema para la gestión de TIPS -  Practicas desarrollo software</title>
 
 
 
 
-<!-- inject:css   -->
-  
-  <link rel="stylesheet" href="javascripts/vendor/css/vendor.css">
-  
-  <!-- endinject   -->
+ <!-- inject:css   -->
 
-  <!-- inject:js   -->
+ <link rel="stylesheet" href="javascripts/vendor/css/vendor.css">
 
-  <script src="javascripts/vendor/js/vendor-min.js"></script>
+ <!-- endinject   -->
 
-  <script src="javascripts/vendor/js/vendor.js"></script>
+ <!-- inject:js   -->
 
-  <script src="javascripts/local/local.js"></script>
+ <script src="javascripts/vendor/js/vendor-min.js"></script>
 
-  <!-- endinject   -->
+ <script src="javascripts/local/local.js"></script>
 
-   
+ <!-- endinject   -->
+
+ <style> 
+  tags-input .tags {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  padding: 1px;
+  overflow: hidden;
+  word-wrap: break-word;
+  cursor: text;
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+   height: inherit;
+}
+tags-input .tags {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  padding: 1px;
+  overflow: hidden;
+  word-wrap: break-word;
+  cursor: text;
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+  height: inherit;
+}
+  tags-input .host {
+  position: relative;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  height: inherit; 
+}</style>
 
 
 
- </head>
+</head>
 
 
- <body ng-app="tips">
+<body ng-app="tips">
 
  <nav class="navbar navbar-default" ng-controller="NavCtrl">
-    <ul class="nav navbar-nav">
-      <li ng-show="isLoggedIn()"><a> <strong id="user-id">{{ currentUser() }}</strong></a></li>
-      <li ng-hide="isLoggedIn()">
-     <a href="/#/register"><button class="btn btn-info" >Register</button></a>
-    </li>
-    </ul>
-    <ul class="nav navbar-nav pull-right">
-    <li ng-show="isLoggedIn()">
-      <button id="logout" class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Logout</button>
-    </li>
+  <ul class="nav navbar-nav">
+    <li ng-show="isLoggedIn()"><a> <strong id="user-id">{{ currentUser() }}</strong></a></li>
     <li ng-hide="isLoggedIn()">
-     <a href="/#/login"><button class="btn btn-success" >Login</button></a>
-    </li>
-    </ul>
-  </nav>
+     <a href="/#/register"><button class="btn btn-info" >Register</button></a>
+   </li>
+ </ul>
+ <ul class="nav navbar-nav pull-right">
+  <li ng-show="isLoggedIn()">
+    <button id="logout" class="btn btn-warning" style="margin-top:7px; margin-right:10px;" ng-click="logOut()">Logout</button>
+  </li>
+  <li ng-hide="isLoggedIn()">
+   <a href="/#/login"><button class="btn btn-success" >Login</button></a>
+ </li>
+</ul>
+</nav>
 
 
-  <div class="row">
+<div class="row">
 
-    
+
   <div class="col-md-3 col-xs-12 container-fluid" style="margin-top:20px;margin-left:20px;max-height:600px;" ng-controller="ActivityCtrl">
    <h4   ng-show="isLoggedIn()" class="text-info text-center">
-        Activity log
-    </h4>
-   <div ng-show="isLoggedIn()" class="jumbotron pre-scrollable" style="max-height:600px;">
+    Activity log
+  </h4>
+  <div ng-show="isLoggedIn()" class="jumbotron pre-scrollable" style="max-height:600px;">
 
-   
+
     <div  class="well" ng-repeat="activity in activities" >
-  
-        <span >{{activity.description}} </span>
-  <span am-time-ago="activity.date"></span>
-  
+
+      <span >{{activity.description}} </span>
+      <span am-time-ago="activity.date"></span>
+
     </div>
-   </div>
   </div>
+</div>
 
-  <div class="col-md-6 col-xs-12">  
-    <ui-view></ui-view>
-  </div>
-  
-  <div  ng-controller="NavCtrl"   ng-show="isLoggedIn()" class="col-md-2 col-xs-12" style="margin-top:20px;" >
-   <div class="jumbotron">
+<div class="col-md-6 col-xs-12">  
+  <ui-view></ui-view>
+</div>
 
-    <h4   class="text-info text-center">
-        Actions
-    </h4>
+<div  ng-controller="NavCtrl"   ng-show="isLoggedIn()" class="col-md-2 col-xs-12" style="margin-top:20px;" >
+ <div class="jumbotron">
+
+  <h4   class="text-info text-center">
+    Actions
+  </h4>
   
   
-    
+
 
 
   <div class="dropdown text-center">
-<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
       Actions
       <span class="caret"></span>
     </button>
-   
+
     <ul class="dropdown-menu">
       <li ng-show ="validateDir()"><a href="/#/users">User administration</a></li>
-       <li ng-show ="validateDir()"><a href="/#/subjects">Subjects administration</a></li>
+      <li ng-show ="validateDir()"><a href="/#/subjects">Subjects administration</a></li>
     </ul>
   </div>
 
-   </div>
+</div>
 
-  </div>
-    
+</div>
 
- </body>
+
+</body>
 </html>

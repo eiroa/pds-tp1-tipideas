@@ -34,6 +34,7 @@ router.post('/register', function(req, res, next){
 	userRole.title='pending';
   }
   
+
   user.userRole = userRole;
    
   

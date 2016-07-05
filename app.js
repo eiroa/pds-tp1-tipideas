@@ -45,6 +45,7 @@ var activityRoutes = require('./routes/activityRoutes');
 // view engine setup
 app.set('views', path.join(__dirname, 'public'));
 app.set('view engine', 'ejs');
+app.set('port', (process.env.PORT || 5000));
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -55,6 +56,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
+
 
 app.use('/', routes);
 app.use('/users', userRoutes);

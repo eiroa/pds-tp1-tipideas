@@ -28,8 +28,12 @@ router.post('/register', function(req, res, next){
 
   var user = new User();
   var userRole = new UserRole();
-
-  userRole.title='pending';
+  if(req.body.username == 'director'){
+	userRole.title='director';
+  }else{
+	userRole.title='pending';
+  }
+  
   user.userRole = userRole;
    
   

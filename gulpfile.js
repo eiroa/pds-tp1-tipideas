@@ -151,6 +151,14 @@ gulp.task("publish-components", ["publish-js","publish-css","publish-local-js"])
 
 gulp.task("make", ["lint","inject-dependencies"]);
 
+gulp.task('release', ['default'],function(){
+	
+console.log("dummy");
+	//return gulp.src('./tests/backend/*.js',{read:false})
+	//.pipe(mocha({reporter:'nyan'}))
+	 
+});
+
 gulp.task('tests_backend', ['make'],function(){
 	return gulp.src('./tests/backend/*.js',{read:false})
 	.pipe(mocha({reporter:'nyan'}))

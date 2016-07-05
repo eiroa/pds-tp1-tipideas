@@ -20,7 +20,7 @@ pm2.connect(function() {
 
   pm2.start({
 
-    script    : ‘bin/www’,
+    script    : ‘app.js’,
 
     name      : ‘tips-pdes',     // ----> THESE ATTRIBUTES ARE OPTIONAL:
 

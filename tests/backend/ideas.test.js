@@ -78,7 +78,7 @@ describe('Testing idea functionality - ', function(){
 					return next(err);
 				}
 				
-				
+				//somehow, database is seriously fucked up
 				//expect(ls[0].description).to.equal("bot desires to enroll to an idea ");
 				expect(ls[0]).to.be.null;
 			});

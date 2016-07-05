@@ -24,6 +24,17 @@ var minifycss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var del = require('del');
 var inject = require('gulp-inject');
+var fs = require('fs')
+var replace = require('gulp-replace');
+
+//release dependecies
+var git = require('gulp-git');
+var gutil = require('gulp-util');
+var changelog = require('gulp-conventional-changelog');
+var releaser = require('conventional-github-releaser');
+var bump = require('gulp-bump');
+
+
 
 
 gulp.task('lint', function() {
@@ -193,5 +204,81 @@ gulp.task('tests_frontend', ['tests_backend'],function (done) {
 gulp.task("tests_backAndFront",["make","tests_backend","tests_frontend"]);
 
 gulp.task("test",["tests_backend","tests_frontend","tests_e2e"]);
+
+
+gulp.task('increaseVersionMajor', function () {
+  return gulp.src(['package.json'])
+    .pipe(bump({type: "major"}))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('increaseVersionMinor' ,function () {
+  return gulp.src(['package.json'])
+    .pipe(bump({type: "minor"}))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('increaseVersionPatch', function () {
+  return gulp.src(['package.json'])
+    .pipe(bump({type: "patch"}))
+    .pipe(gulp.dest('./'));
+});
+
+
+gulp.task('changelog', function () {
+  return gulp.src('CHANGELOG.md', {
+    buffer: false
+  })
+    .pipe(changelog({
+      preset: ''
+    }))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('commit', ['changelog'] ,function () {
+  return gulp.src('.')
+    .pipe(git.add())
+    .pipe(git.commit('new version'));
+});
+
+function getCurrentBranch(cb) {
+   git.revParse({args: '--abbrev-ref HEAD', cwd: __dirname}, function(err, branch) {
+      if (err) {
+        throw new Error('error getting current branch', err);
+      }
+      cb(branch);
+   });
+};
+
+gulp.task('push', ['commit'],function(cb) {
+   getCurrentBranch(function(branch) {
+      git.push('origin', branch, cb);
+   });
+});
+
+gulp.task('tag',['push'], function (cb) {
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  getCurrentBranch(function(branch) {
+        git.tag('V' + version, 'Releasing new version:' + version, function(error) {
+            if (error) { return cb(error); }
+            git.push('origin', branch, {args: '--tags'}, cb);
+        });
+    });
+});
+
+
+gulp.task('showVersionInApp', function(){
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  gulp.src(['public/index.ejs'])
+    .pipe(replace('x.y.z', version))
+    .pipe(gulp.dest('public/index.ejs'));
+});
+
+
+gulp.task("releaseMajor",["increaseVersionMajor","changelog","commit","push","tag"]);
+gulp.task("releaseMinor",["increaseVersionMinor","changelog","commit","push","tag"]);
+gulp.task("releasePatch",["increaseVersionPatch","changelog","commit","push","tag"]);
+
+
 
 gulp.task('default', ['lint', 'make','tests_backAndFront']);

@@ -247,7 +247,7 @@ function getCurrentBranch(cb) {
       }
       cb(branch);
    });
-}
+};
 
 gulp.task('push', ['commit'],function(cb) {
    getCurrentBranch(function(branch) {
@@ -263,8 +263,9 @@ gulp.task('tag',['push'], function (cb) {
             git.push('origin', branch, {args: '--tags'}, cb);
         });
     });
+});
 
-gulp.task('release', function(done) {
+gulp.task('release', ['tag'],function(done) {
   releaser({
     type: "oauth",
     token: process.env.CONVENTIONAL_GITHUB_RELEASER_TOKEN

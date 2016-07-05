@@ -267,7 +267,7 @@ gulp.task('tag',['push'], function (cb) {
 
 gulp.task('release', ['tag'],function(done) {
   releaser({
-    token: a10bf750417534e9591faacfa85fccfc0a008e78
+    token: 'a10bf750417534e9591faacfa85fccfc0a008e78'
   }, {
     preset: 'pds-tp1-tipideas'
   }, done);

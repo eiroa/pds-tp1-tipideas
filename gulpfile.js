@@ -265,11 +265,12 @@ gulp.task('tag',['push'], function (cb) {
     });
 });
 
+/*
 gulp.task('release', ['tag'],function(done) {
 
 var AUTH = {
   type: "oauth",
-  token: 'a10bf750417534e9591faacfa85fccfc0a008e78'// change this to your own GitHub token or use an environment variable
+  token: 'a10bf750417534e9591faacfa85fccfc0a008e78'
 };
 
 releaser(AUTH, {
@@ -277,11 +278,12 @@ releaser(AUTH, {
 }, done);
 
 });
+*/
 
-gulp.task("releaseMajor",["increaseVersionMajor","changelog","commit","push","tag","release"]);
-gulp.task("releaseMinor",["increaseVersionMinor","changelog","commit","push","tag","release"]);
+gulp.task("releaseMajor",["increaseVersionMajor","changelog","commit","push","tag"]);
+gulp.task("releaseMinor",["increaseVersionMinor","changelog","commit","push","tag"]);
 
-gulp.task("releasePatch",["increaseVersionPatch","changelog","commit","push","tag","release"]);
+gulp.task("releasePatch",["increaseVersionPatch","changelog","commit","push","tag"]);
 
 
 

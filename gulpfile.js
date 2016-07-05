@@ -24,6 +24,16 @@ var minifycss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var del = require('del');
 var inject = require('gulp-inject');
+var fs = require('fs')
+
+//release dependecies
+var git = require('gulp-git');
+var gutil = require('gulp-util');
+var changelog = require('gulp-conventional-changelog');
+var release = require('conventional-github-releaser');
+var bump = require('gulp-bump');
+
+
 
 
 gulp.task('lint', function() {
